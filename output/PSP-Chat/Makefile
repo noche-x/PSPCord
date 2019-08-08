@@ -1,5 +1,5 @@
 TARGET = psp-chat
-OBJS = src/PSP-Chat/main.o src/PSP-Chat/common.o src/PSP-Chat/intrafont/intraFont.o src/PSP-Chat/intrafont/libccc.o src/PSP-Chat/intrafont/glib2d.o src/PSP-Chat/valloc.o
+OBJS = ../../src/PSP-Chat/main.o ../../src/PSP-Chat/common.o ../../src/PSP-Chat/intrafont/intraFont.o ../../src/PSP-Chat/intrafont/libccc.o ../../src/PSP-Chat/intrafont/glib2d.o ../../src/PSP-Chat/valloc.o
 INCDIR = $(PSPPATH)/include include include/archive include/menus
 CFLAGS = -O3 -Wall -mpreferred-stack-boundary=4
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti

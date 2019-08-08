@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+*.ipch
+*.opendb
+*.db
+.vs/PSP-Chat/v16/.suo
+*.sqlite
+*.json

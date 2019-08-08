@@ -147,6 +147,10 @@ namespace renderer {
 		g2dEnd();
 	}
 
+	inline void set_font_style(float size = 0.5f, unsigned int color = 0xFFFFFFFF, unsigned int shadow = 0x00000000, unsigned int opt = INTRAFONT_ALIGN_LEFT) {
+		intraFontSetStyle(font, size, color, shadow, 0, opt);
+	}
+
 	inline void begin() {
 		g2dClear(G2D_RGBA(80, 80, 80, 255));
 		image(textures::background, 0, 0);
@@ -155,11 +159,7 @@ namespace renderer {
 		set_font_style();
 		intraFontPrint(font, 0, 0 + font->texYSize, get_time());
 	}
-
-	inline void set_font_style(float size = 0.5f, unsigned int color = 0xFFFFFFFF, unsigned int shadow = 0x00000000, unsigned int opt = INTRAFONT_ALIGN_LEFT) {
-		intraFontSetStyle(font, size, color, shadow, 0, opt);
-	}
-
+	
 	inline void end() {
 		g2dFlip(G2D_VSYNC);
 	}

@@ -1,24 +1,14 @@
-cd K:\PSP\GAME\psp_chatter\
 K:
-
-del EBOOT.PBP
-del pspchatter.elf
-del pspchatter.prx
-
-for /r %%v in (*) do del "%%v"
-
-cd data
-for /r %%v in (*) do del "%%v"
-
-cd K:\PSP\GAME\psp_chatter\
+cd K:\PSP\GAME\
+mkdir PSP-Chat
+cd PSP-Chat
 mkdir data
 
 C:
-cd output
-copy EBOOT.PBP K:\PSP\GAME\psp_chatter
-copy pspchatter.elf K:\PSP\GAME\psp_chatter
-copy pspchatter.prx K:\PSP\GAME\psp_chatter
+cd output\PSP-Chat
+copy EBOOT.PBP K:\PSP\GAME\PSP-Chat
+copy pspchatter.elf K:\PSP\GAME\PSP-Chat
+copy pspchatter.prx K:\PSP\GAME\PSP-Chat
 
-cd..
 cd data
-for /r %%v in (*) do copy "%%v" K:\PSP\GAME\psp_chatter\data\
+for /r %%v in (*) do copy "%%v" K:\PSP\GAME\PSP-Chat\data\
