@@ -1,5 +1,22 @@
 TARGET = psp-chat
-OBJS = src/PSP-Chat/main.o src/PSP-Chat/common.o src/PSP-Chat/intrafont/intraFont.o src/PSP-Chat/intrafont/libccc.o src/PSP-Chat/intrafont/glib2d.o src/PSP-Chat/valloc.o
+OBJS = src/PSP-Chat/main.o \
+src/PSP-Chat/framework/utils/common.o \
+src/PSP-Chat/framework/utils/Input.o \
+src/PSP-Chat/framework/utils/MemoryUsage.o \
+src/PSP-Chat/framework/utils/Timer.o \
+src/PSP-Chat/framework/utils/vfram.o \
+src/PSP-Chat/framework/utils/vram.o \
+src/PSP-Chat/framework/audio/sound_utils/audio.o \
+src/PSP-Chat/framework/audio/sound_utils/bgm.o \
+src/PSP-Chat/framework/audio/sound_utils/media.o \
+src/PSP-Chat/framework/audio/sound_utils/vfsFile.o \
+src/PSP-Chat/framework/audio/sound_utils/VirtualFile.o \
+src/PSP-Chat/framework/audio/AudioManager.o \
+src/PSP-Chat/framework/gfx/intrafont/libccc.o \
+src/PSP-Chat/framework/gfx/intrafont/intraFont.o \
+src/PSP-Chat/framework/gfx/TextureUtil.o \
+src/PSP-Chat/framework/gfx/RenderUtil.o \
+
 INCDIR = $(PSPPATH)/include include include/archive include/menus
 CFLAGS = -O3 -Wall -mpreferred-stack-boundary=4
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
@@ -7,7 +24,7 @@ ASFLAGS = $(CFLAGS)
 
 BUILD_PRX = 1
 PSP_FW_VERSION=371
-PSP_LARGE_MEMORY = 1
+PSP_LARGE_MEMORY = 0 #PHAT SUPPORT! Our app isn't that big! 
 
 LDFLAGS =
 STDLIBS = -losl -lpng -lz \

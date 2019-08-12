@@ -7,6 +7,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <psptypes.h>
 #include "VirtualFile.h"
 
 /** @defgroup audio Audio
@@ -37,10 +39,6 @@ extern "C" {
 		Normal
 			s->data (malloc: s->size)
 */
-
-#include <stdint.h>
-typedef uint16_t u16;
-typedef uint8_t u8;
 
 /** Structure of a sound in OSLib. You can make your own "drivers" for other sound types but I can't guarantee they will be forward compatible, so please release your source when creating one ;-) */
 typedef struct OSL_SOUND		{

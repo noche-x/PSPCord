@@ -7,12 +7,13 @@
 #ifndef __OSL_VIRTUALFILE_H__
 #define __OSL_VIRTUALFILE_H__
 
+#include <psptypes.h>
+#include <stdlib.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <stdlib.h>
-#include <stdint.h>
 /** @defgroup virtualfile Virtual Files
 
 	Virtual File support for OSLib.
@@ -232,7 +233,7 @@ extern void *oslReadEntireFileToMemory(VIRTUAL_FILE *f, int *size);
 
 
 /*
-	Source par d\E9faut: m\E9moire
+	Source par défaut: mémoire
 */
 extern int vfsMemOpen(void *param1, int param2, int type, int mode, VIRTUAL_FILE* f);
 extern int vfsMemClose(VIRTUAL_FILE *f);
@@ -266,7 +267,7 @@ int oslInitVfsFile();
 	\param source
 		Can be VF_FILE, VF_MEMORY or any virtual file device registered by you.
 */
-inline void oslSetDefaultVirtualFileSource(int source)		{
+extern inline void oslSetDefaultVirtualFileSource(int source)		{
 	osl_defaultVirtualFileSource = source;
 }
 
@@ -288,7 +289,7 @@ extern int VF_FILE;
 
 
 /** Gets the name of the temporary file. See #oslSetTempFileData for a code sample. */
-inline char *oslGetTempFileName()		{
+extern inline char *oslGetTempFileName()		{
 	return (char*)osl_tempFileName;
 }
 

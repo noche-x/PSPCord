@@ -168,7 +168,7 @@ static void setChannelSound(int voice, OSL_SOUND *s)		{
 	osl_audioVoices[voice].isStreamed = s->isStreamed;
 //	osl_audioVoices[voice].volumeLeft = s->volumeLeft;
 //	osl_audioVoices[voice].volumeRight = s->volumeRight;
-
+	
 	//Les deux sont liés
 	osl_audioVoices[voice].sound = s;
 }
@@ -193,7 +193,7 @@ int oslAudioCreateChannel(int i, int format, int numSamples, OSL_SOUND *s)
 	}
 
 	if (failed) {
-		if (AudioStatus[i].handle != -1)
+		if (AudioStatus[i].handle != -1) 
 			sceAudioChRelease(AudioStatus[i].handle);
 		AudioStatus[i].handle = -1;
 		return -1;
@@ -238,7 +238,7 @@ int oslAudioRecreateChannel(int i, int format, int numSamples, OSL_SOUND *s)
 	}
 
 	if (failed) {
-		if (AudioStatus[i].handle != -1)
+		if (AudioStatus[i].handle != -1) 
 			sceAudioChRelease(AudioStatus[i].handle);
 		AudioStatus[i].handle = -1;
 		return -1;
@@ -295,7 +295,7 @@ void oslDecodeWav(unsigned int i, void* buf, unsigned int length)		{
 		VirtualFileRead(streambuffer, len, 1, wav->fp);
 		wav->streambuffer = streambuffer;
 	}
-
+	
 
 	if (samples == 1)			{
 		if (osl_audioVoices[i].mono == 0)
@@ -354,7 +354,7 @@ int oslAudioPowerCallback(int unknown, int pwrflags,void *common)			{
 	OSL_SOUND *s;
 	VIRTUAL_FILE *f = NULL;
 	int i;
-
+	
 	if ((pwrflags & PSP_POWER_CB_POWER_SWITCH))		{
 		osl_audioStandBy = 1;
 		for (i=0;i<OSL_NUM_AUDIO_CHANNELS;i++)			{
@@ -388,7 +388,7 @@ int oslAudioPowerCallback(int unknown, int pwrflags,void *common)			{
 	else if(pwrflags & PSP_POWER_CB_RESUME_COMPLETE)		{
 		osl_audioStandBy = 0;
 	}
-
+	
 	if (osl_audioOldPowerCallback)
 		return osl_audioOldPowerCallback(unknown, pwrflags, common);
 	else

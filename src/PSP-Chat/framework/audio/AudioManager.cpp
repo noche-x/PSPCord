@@ -1,21 +1,18 @@
 #include "AudioManager.hpp"
 
-namespace audio{
-    void AudioManager::Init()
-    {
-	    VirtualFileInit();
-	    oslInitAudio();
-    }
-
-    void AudioManager::Update()
-    {
-	    oslAudioVSync();
-    }
-
-    void AudioManager::PlaySound(OSL_SOUND * sound, SoundChannel channel)
-    {
-	    oslPlaySound(sound, channel);
-    }
-
-    AudioManager g_AudioManager = AudioManager();
+void AudioManager::Init(){
+    VirtualFileInit();
+    oslInitAudio();
 }
+
+void AudioManager::Update()
+{
+    oslAudioVSync();
+}
+
+void AudioManager::PlaySound(OSL_SOUND * sound, SoundChannel channel)
+{
+    oslPlaySound(sound, channel);
+}
+
+AudioManager g_AudioManager = AudioManager();
