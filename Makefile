@@ -16,6 +16,7 @@ src/PSP-Chat/framework/gfx/intrafont/libccc.o \
 src/PSP-Chat/framework/gfx/intrafont/intraFont.o \
 src/PSP-Chat/framework/gfx/TextureUtil.o \
 src/PSP-Chat/framework/gfx/RenderUtil.o \
+src/PSP-Chat/framework/gfx/Sprite.o \
 
 INCDIR = $(PSPPATH)/include include include/archive include/menus
 CFLAGS = -O3 -Wall -mpreferred-stack-boundary=4
@@ -28,7 +29,7 @@ PSP_LARGE_MEMORY = 0 #PHAT SUPPORT! Our app isn't that big!
 
 LDFLAGS =
 STDLIBS = -losl -lpng -lz \
-          -lpsphprm -lpspsdk -lpspctrl -lpsprtc -lpsppower -lpspgu -lpspgum -lpsphttp -lpspssl -lpspwlan \
+          -lpsphprm -lpspsdk -lpspctrl -lpsprtc -lpsppower -lpspgum -lpspgu -lpsphttp -lpspssl -lpspwlan \
           -lpspnet_adhocmatching -lpspnet_adhoc -lpspnet_adhocctl -lm -ljpeg \
           -lpspusb -lpspusbstor \
           -lpspmp3 -lmad -lpspaudiolib -lpspaudio -lpspaudiocodec -lmikmod -lstdc++ -lmmio -lpspvfpu \
