@@ -1,4 +1,4 @@
-PATH=D:\pspsdk\bin;%cd%;
+PATH=C:\pspsdk\bin;%cd%;
 make all
 move psp-chat.elf output\PSP-Chat
 move psp-chat.prx output\PSP-Chat
