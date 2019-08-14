@@ -29,10 +29,11 @@ int main(int argc, char* argv[])
 	//g_AudioManager.Init();
 
 	LoginState* loginState;
-	ConnectingState* connectingState;
-	g_StateManager.pushState(loginState);
+	loginState->init();
+	//ConnectingState* connectingState;
+	//g_StateManager.changeState(loginState);
 
-	//Texture* bg_texture = TextureUtil::LoadPng("data/background.png");
+	Texture* bg_texture = TextureUtil::LoadPng("data/background.png");
 
 	while (1) {
 		//g_StateManager.update();
@@ -41,9 +42,12 @@ int main(int argc, char* argv[])
 		g_RenderUtil.frameBegin();
 		g_RenderUtil.frameClear();
 		
-		//Sprite bg(bg_texture);
+		Sprite bg(bg_texture);
+		bg.SetPosition(0.f, 0.f);
+		bg.Scale(2.f, 2.f);
+		bg.Draw();
 
-		g_StateManager.draw();
+		//g_StateManager.draw();
 
 		g_RenderUtil.frameEnd();
 
