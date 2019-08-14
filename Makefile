@@ -17,6 +17,7 @@ src/PSP-Chat/framework/gfx/intrafont/intraFont.o \
 src/PSP-Chat/framework/gfx/TextureUtil.o \
 src/PSP-Chat/framework/gfx/RenderUtil.o \
 src/PSP-Chat/framework/gfx/Sprite.o \
+src/PSP-Chat/framework/state/StateManager.o \
 
 INCDIR = $(PSPPATH)/include include include/archive include/menus
 CFLAGS = -O3 -Wall -mpreferred-stack-boundary=4

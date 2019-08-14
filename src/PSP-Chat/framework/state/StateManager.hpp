@@ -16,3 +16,5 @@ class StateManager{
     private:
         std::vector<AppState*> states;
 };
+
+extern StateManager g_StateManager;
