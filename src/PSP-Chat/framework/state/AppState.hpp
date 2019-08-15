@@ -13,5 +13,5 @@ class AppState{
         virtual void draw() = 0;
 
     protected:
-        AppState();
+		AppState() {}                             
 };

@@ -6,7 +6,7 @@
 class LoginState : public AppState {
 public:
 	void init() {
-		g_RenderUtil.setFonts(1.f, 0x00000000, 0xFFFFFFFF, 0.f, INTRAFONT_CACHE_ALL);
+		g_RenderUtil.setFonts(0.5f, 0x00000000, 0xFFFFFFFF, 0.f, INTRAFONT_ALIGN_LEFT);
 	};
 
 	void enter() {

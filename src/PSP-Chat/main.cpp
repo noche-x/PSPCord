@@ -24,35 +24,35 @@ int main(int argc, char* argv[])
 	setupExitCallback();
 	
 	g_RenderUtil.init();
-	g_RenderUtil.initFonts("data/font.pgf");
+	g_RenderUtil.initFonts("flash0:/font/ltn0.pgf");
 
 	//g_AudioManager.Init();
-
-	LoginState* loginState;
+	
+	LoginState* loginState = new LoginState();
 	loginState->init();
-	//ConnectingState* connectingState;
-	//g_StateManager.changeState(loginState);
+	ConnectingState* connectingState = new ConnectingState();
+	g_StateManager.changeState(loginState);
 
 	Texture* bg_texture = TextureUtil::LoadPng("data/background.png");
+	Sprite* bg = new Sprite(bg_texture);
 
 	while (1) {
-		//g_StateManager.update();
-		//input.Update();
+		g_StateManager.update();
+		input.Update();
 
 		g_RenderUtil.frameBegin();
 		g_RenderUtil.frameClear();
 		
-		Sprite bg(bg_texture);
-		bg.SetPosition(0.f, 0.f);
-		bg.Scale(2.f, 2.f);
-		bg.Draw();
+		bg->SetPosition(0.f, 0.f);
+		bg->Scale(2.f, 2.f);
+		bg->Draw();
 
-		//g_StateManager.draw();
+		g_StateManager.draw();
 
 		g_RenderUtil.frameEnd();
 
-		//if (input.isActionDown(PSP_CROSS))
-			//g_StateManager.pushState(connectingState);
+		if (input.isActionDown(PSP_CROSS))
+			g_StateManager.pushState(connectingState);
 	}
 	
 

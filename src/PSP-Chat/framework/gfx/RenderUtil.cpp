@@ -111,7 +111,7 @@ void RenderUtil::setClearColor(int r, int g, int b, int a)
 void RenderUtil::initFonts(const char * path)
 {
 	intraFontInit();
-	font = intraFontLoad(path, INTRAFONT_CACHE_ASCII);
+	font = intraFontLoad(path, INTRAFONT_CACHE_ALL);
 	intraFontSetStyle(font, 0.5f, 0xFFFFFFFF, 0x00000000, 0.0f, INTRAFONT_ALIGN_LEFT);
 }
 
