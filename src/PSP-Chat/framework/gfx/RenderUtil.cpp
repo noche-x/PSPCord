@@ -112,12 +112,21 @@ void RenderUtil::initFonts(const char * path)
 {
 	intraFontInit();
 	font = intraFontLoad(path, INTRAFONT_CACHE_ALL);
-	intraFontSetStyle(font, 0.5f, 0xFFFFFFFF, 0x00000000, 0.0f, INTRAFONT_ALIGN_LEFT);
+	intraFontSetStyle(font, 0.5f, 0xFFFFFFFF, 0x00000000, 0, INTRAFONT_ALIGN_LEFT);
 }
 
 void RenderUtil::setFonts(float size, unsigned int color, unsigned int shadowColor, float angle, unsigned int options)
 {
 	intraFontSetStyle(font, size, color, shadowColor, angle, options);
+}
+
+void RenderUtil::print(int x, int y, const char* message)
+{
+	sceGuEnable(GU_BLEND);
+	sceGuEnable(GU_TEXTURE_2D);
+	intraFontPrint(font, x, y, message);
+	sceGuDisable(GU_BLEND);
+	sceGuDisable(GU_TEXTURE_2D);
 }
 
 void RenderUtil::printf(int x, int y, const char * message, ...)

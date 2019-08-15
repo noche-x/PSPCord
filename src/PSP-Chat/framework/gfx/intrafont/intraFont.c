@@ -35,6 +35,27 @@ unsigned long intraFontGetV(unsigned long n, unsigned char *p, unsigned long *b)
   return v;
 }
 
+unsigned long* intraFontGetTableMem(const char *font_buffer, long int* buffer_pos, unsigned int filesize, unsigned long n_elements, unsigned long bp_element) {
+  unsigned long len_table = ((n_elements*bp_element+31)/32)*4;
+  unsigned char *raw_table = (unsigned char*)malloc(len_table*sizeof(unsigned char));
+  if (raw_table == NULL) return NULL;
+
+  memcpy(raw_table, font_buffer + *buffer_pos, len_table*sizeof(unsigned char));
+  *buffer_pos += len_table*sizeof(unsigned char);
+
+  unsigned long *table = (unsigned long*)malloc(n_elements*sizeof(unsigned long));
+  if (table == NULL) {
+    free(raw_table);
+    return NULL;
+  }
+  unsigned long i,j=0;
+  for (i=0;i<n_elements;i++) {
+    table[i] = intraFontGetV(bp_element,raw_table,&j);
+  }
+  free(raw_table);
+  return table;
+}
+
 unsigned long* intraFontGetTable(FILE *file, unsigned long n_elements, unsigned long bp_element) {
   unsigned long len_table = ((n_elements*bp_element+31)/32)*4;
   unsigned char *raw_table = (unsigned char*)malloc(len_table*sizeof(unsigned char));
@@ -341,6 +362,304 @@ int intraFontPreCache(intraFont *font, unsigned int options) {
   sceKernelDcacheWritebackAll();
   
   return 1;
+}
+
+intraFont* intraFontLoadMem(const char *filename, const char *font_buffer, unsigned int filesize, unsigned int options) {
+    unsigned long i,j;
+    long int buffer_pos = 0;
+  static Glyph bw_glyph                         = { 0, 0, 16, 18, 0, 15, PGF_BMP_H_ROWS, 0, 64, 0 };
+  static Glyph bw_shadowGlyph                   = { 0, 0,  8, 10, 0,  5, PGF_BMP_H_ROWS, 0, 64, 0 };
+  static const unsigned short bw_charmap_compr[]= { 0x00a4,  1, 0x00a7,  2, 0x00b0,  2, 0x00b7,  1, 0x00d7,  1, 0x00e0,  2, 0x00e8,  3, 0x00ec,  2,
+                                                  0x00f2,  2, 0x00f7,  1, 0x00f9,  2, 0x00fc,  1, 0x0101,  1, 0x0113,  1, 0x011b,  1, 0x012b,  1, 
+                            0x0144,  1, 0x0148,  1, 0x014d,  1, 0x016b,  1, 0x01ce,  1, 0x01d0,  1, 0x01d2,  1, 0x01d4,  1, 
+                            0x01d6,  1, 0x01d8,  1, 0x01da,  1, 0x01dc,  1, 0x0251,  1, 0x0261,  1, 0x02c7,  1, 0x02c9,  3, 
+                            0x02d9,  1, 0x0391, 17, 0x03a3,  7, 0x03b1, 17, 0x03c3,  7, 0x0401,  1, 0x0410, 64, 0x0451,  1,
+                            0x2010,  1, 0x2013,  4, 0x2018,  2, 0x201c,  2, 0x2025,  2, 0x2030,  1, 0x2032,  2, 0x2035,  1,
+                            0x203b,  1, 0x20ac,  1, 0x2103,  1, 0x2105,  1, 0x2109,  1, 0x2116,  1, 0x2121,  1, 0x2160, 12, 
+                            0x2170, 10, 0x2190,  4, 0x2196,  4, 0x2208,  1, 0x220f,  1, 0x2211,  1, 0x2215,  1, 0x221a,  1, 
+                            0x221d,  4, 0x2223,  1, 0x2225,  1, 0x2227,  5, 0x222e,  1, 0x2234,  4, 0x223d,  1, 0x2248,  1, 
+                            0x224c,  1, 0x2252,  1, 0x2260,  2, 0x2264,  4, 0x226e,  2, 0x2295,  1, 0x2299,  1, 0x22a5,  1, 
+                            0x22bf,  1, 0x2312,  1, 0x2460, 10, 0x2474, 40, 0x2500, 76, 0x2550, 36, 0x2581, 15, 0x2593,  3, 
+                            0x25a0,  2, 0x25b2,  2, 0x25bc,  2, 0x25c6,  2, 0x25cb,  1, 0x25ce,  2, 0x25e2,  4, 0x2605,  2, 
+                            0x2609,  1, 0x2640,  1, 0x2642,  1, 0x2e81,  1, 0x2e84,  1, 0x2e88,  1, 0x2e8b,  2, 0x2e97,  1, 
+                            0x2ea7,  1, 0x2eaa,  1, 0x2eae,  1, 0x2eb3,  1, 0x2eb6,  2, 0x2ebb,  1, 0x2eca,  1, 0x2ff0, 12, 
+                            0x3000,  4, 0x3005, 19, 0x301d,  2, 0x3021,  9, 0x303e,  1, 0x3041, 83, 0x309b,  4, 0x30a1, 86,
+                            0x30fc,  3, 0x3105, 37, 0x3220, 10, 0x3231,  1, 0x32a3,  1, 0x338e,  2, 0x339c,  3, 0x33a1,  1, 
+                            0x33c4,  1, 0x33ce,  1, 0x33d1,  2, 0x33d5,  1,0x3400,6582,0x4e00,20902,0xe78d, 10, 0xe7c7,  2,
+                            0xe816,  3, 0xe81e,  1, 0xe826,  1, 0xe82b,  2, 0xe831,  2, 0xe83b,  1, 0xe843,  1, 0xe854,  2, 
+                            0xe864,  1, 0xf92c,  1, 0xf979,  1, 0xf995,  1, 0xf9e7,  1, 0xf9f1,  1, 0xfa0c,  4, 0xfa11,  1, 
+                            0xfa13,  2, 0xfa18,  1, 0xfa1f,  3, 0xfa23,  2, 0xfa27,  3, 0xfe30,  2, 0xfe33, 18, 0xfe49, 10, 
+                            0xfe54,  4, 0xfe59, 14, 0xfe68,  4, 0xff01, 94, 0xffe0,  6 };
+  static const unsigned char bw_shadow[]        = { 0x10, 0x11, 0x11, 0x01, 0x10, 0x22, 0x22, 0x01, 0x21, 0x43, 0x34, 0x12, 0x31, 0x75, 0x57, 0x13, 
+                                                  0x31, 0x86, 0x68, 0x13, 0x31, 0x86, 0x68, 0x13, 0x31, 0x75, 0x57, 0x13, 0x21, 0x43, 0x34, 0x12, 
+                            0x10, 0x22, 0x22, 0x01, 0x10, 0x11, 0x11, 0x01 };
+  
+  //create font structure
+  intraFont* font = (intraFont*)malloc(sizeof(intraFont));
+  if (!font) return NULL;
+  
+  if (font_buffer == NULL)
+    return NULL;
+  
+  //read pgf header
+  static PGF_Header header;
+  memcpy(&header, font_buffer, sizeof(PGF_Header));
+  buffer_pos += sizeof(PGF_Header);
+  //pgf header tests: valid and known pgf file?
+  if ((strncmp(header.pgf_id,"PGF0",4) == 0) && (header.version == 6) && (header.revision == 2 || header.revision == 3) &&
+    (header.charmap_len <= 65535) && (header.charptr_len <= 65535) && (header.charmap_bpe <= 32) && (header.charptr_bpe <= 32) &&
+    (header.charmap_min <= header.charmap_max) && (header.shadowmap_len <= 511) && (header.shadowmap_bpe <= 16)) {
+    font->fileType = FILETYPE_PGF;
+  } else if (filesize == 1023372) { //only known size for bwfon -> refuse to work for modified sizes
+    font->fileType = FILETYPE_BWFON;
+  } else {
+    return NULL;
+  }
+  
+  //intitialize font structure
+  if (font->fileType == FILETYPE_PGF) {
+    font->n_chars = (unsigned short)header.charptr_len;
+    font->charmap_compr_len = (header.revision == 3)?7:1;
+    font->texYSize = 0;  
+    font->advancex = header.fixedsize[0]/16;
+    font->advancey = header.fixedsize[1]/16;
+    font->n_shadows = (unsigned short)header.shadowmap_len;
+    font->shadowscale = (unsigned char)header.shadowscale[0];
+    font->glyph = (Glyph*)malloc(font->n_chars*sizeof(Glyph));
+    font->glyphBW = NULL;
+    font->shadowGlyph = (Glyph*)malloc(font->n_shadows*sizeof(Glyph));
+    font->charmap_compr = (unsigned short*)malloc(font->charmap_compr_len*sizeof(unsigned short)*2);
+    font->charmap = (unsigned short*)malloc(header.charmap_len*sizeof(unsigned short));
+    if (!font->glyph || !font->shadowGlyph || !font->charmap_compr || !font->charmap) {
+      intraFontUnload(font);
+      return NULL;
+    }
+    memset(font->glyph, 0, font->n_chars*sizeof(Glyph)); //make sure glyphs are initialized with 0
+    memset(font->shadowGlyph, 0, font->n_shadows*sizeof(Glyph));
+  } else { //FILETYPE_BWFON
+    font->n_chars = filesize/36; //36 bytes/char
+    font->charmap_compr_len = 165; //entries in the compressed charmap
+    font->texYSize = 18;  
+    font->advancex = 16*4;
+    font->advancey = 18*4;
+    font->n_shadows = 1;
+    font->shadowscale = 24;
+    font->glyph = &bw_glyph;
+    font->glyph[0].shadowID = font->n_chars; //shadow is appended
+    font->glyphBW = (GlyphBW*)malloc(font->n_chars*sizeof(GlyphBW));
+    font->shadowGlyph = &bw_shadowGlyph;
+    font->charmap_compr = (unsigned short*)bw_charmap_compr; //static for bwfon
+    font->charmap = NULL;                //not needed for bwfon
+    if (!font->glyphBW) {
+      intraFontUnload(font);
+      return NULL;
+    }  
+    memset(font->glyphBW, 0, font->n_chars*sizeof(GlyphBW)); //make sure glyphBWs are initialized with 0
+  }  
+  font->texWidth = (options & INTRAFONT_CACHE_LARGE) ? (512) : (256);
+  font->texHeight = font->texWidth;
+  font->texX = 1;
+  font->texY = 1;
+    font->options = options; 
+  if ((options & INTRAFONT_CACHE_ASCII) ) font->options -= INTRAFONT_CACHE_ASCII; //pre-cached texture enabled at the end of font-load
+    font->size = 1.0f;               //default size
+    font->color = 0xFFFFFFFF;        //non-transparent white
+    font->shadowColor = 0xFF000000;  //non-transparent black
+    font->angle = 0.f;               //non-rotated
+    font->Rsin = 0.f;
+    font->Rcos = 1.f;
+    font->isRotated = 0;
+  font->altFont = NULL;            //no alternative font
+  font->filename = (char*)malloc((strlen(filename)+1)*sizeof(char));
+  font->texture = (unsigned char*)memalign(16,font->texWidth*font->texHeight>>1);
+  if (!font->filename || !font->texture) {
+    intraFontUnload(font);
+    return NULL;
+  }
+  strcpy(font->filename,filename);
+  
+  //read in file (tables / fontdata) and populate font structure
+  if (font->fileType == FILETYPE_PGF) {
+
+    //read advance table
+    buffer_pos = header.header_len+(header.table1_len+header.table2_len+header.table3_len)*8;
+    signed long *advancemap = (signed long*)malloc(header.advance_len*sizeof(signed long)*2);
+    if (!advancemap) {
+      intraFontUnload(font);
+      return NULL;
+    }
+    memcpy(advancemap, font_buffer + buffer_pos, header.advance_len*sizeof(signed long)*2);
+    buffer_pos += header.advance_len*sizeof(signed long)*2;
+  
+    //read shadowmap
+    unsigned long *ucs_shadowmap = intraFontGetTableMem(font_buffer, &buffer_pos, filesize, header.shadowmap_len, header.shadowmap_bpe);
+    if (ucs_shadowmap == NULL) {
+      free(advancemap);  
+      intraFontUnload(font);
+      return NULL;
+    }
+  
+    //version 6.3 charmap compression
+    if (header.revision == 3) {
+      memcpy(font->charmap_compr, font_buffer + buffer_pos, font->charmap_compr_len*sizeof(unsigned short)*2);
+      buffer_pos += font->charmap_compr_len*sizeof(unsigned short)*2;
+    } else {
+      font->charmap_compr[0] = header.charmap_min;
+      font->charmap_compr[1] = header.charmap_len;
+    }
+  
+    //read charmap
+    if (header.charmap_bpe == 16) { //read directly from file...
+      memcpy(font->charmap, font_buffer + buffer_pos, header.charmap_len*sizeof(unsigned short));
+      buffer_pos += header.charmap_len*sizeof(unsigned short);
+    } else {
+      unsigned long *id_charmap = intraFontGetTableMem(font_buffer, &buffer_pos, filesize, header.charmap_len, header.charmap_bpe);
+      if (id_charmap == NULL) {
+        free(advancemap);  
+        free(ucs_shadowmap);
+        intraFontUnload(font);
+        return NULL;
+      }
+      for (i=0;i<header.charmap_len;i++) {
+        font->charmap[i]=(unsigned short)((id_charmap[i] < font->n_chars)?id_charmap[i]:65535);
+      }
+      free(id_charmap);
+    }
+  
+    //read charptr
+    unsigned long *charptr = intraFontGetTableMem(font_buffer, &buffer_pos, filesize, header.charptr_len, header.charptr_bpe);
+    if (charptr == NULL) {
+      free(advancemap);  
+      free(ucs_shadowmap);
+      intraFontUnload(font);
+      return NULL;
+    }
+
+    //read raw fontdata
+    unsigned long start_fontdata = buffer_pos;
+    unsigned long len_fontdata = filesize-start_fontdata;
+    font->fontdata = (unsigned char*)malloc(len_fontdata*sizeof(unsigned char));
+    if (font->fontdata == NULL) {
+      free(advancemap);  
+        free(ucs_shadowmap);
+      free(charptr);
+      intraFontUnload(font);
+      return NULL;
+    }
+    memcpy(font->fontdata, font_buffer + buffer_pos, len_fontdata*sizeof(unsigned char));
+    buffer_pos += len_fontdata*sizeof(unsigned char);
+  
+    //count ascii chars and reduce mem required
+    if ((options & PGF_CACHE_MASK) == INTRAFONT_CACHE_ASCII) {
+      font->n_chars = 1; //assume there's at least one char (needed for intraFontGetID to work properly)
+      for (i=0; i<128; i++) {
+        if (intraFontGetID(font,i) < 65535) (font->n_chars)++;
+      }
+      (font->n_chars)--; //correct the above assumption
+      if (font->n_chars == 0) { //no ASCII chars in fontfile -> abort
+        free(advancemap);      
+        free(ucs_shadowmap);
+        free(charptr);
+        intraFontUnload(font);
+        return NULL;
+      }
+      font->glyph = (Glyph*)realloc(font->glyph,font->n_chars*sizeof(Glyph));
+      font->charmap_compr[1] = 128 - font->charmap_compr[0];
+      font->charmap = (unsigned short*)realloc(font->charmap,font->charmap_compr[1]*sizeof(unsigned short)); 
+    }
+  
+    //populate chars and count space used in cache to prebuffer all chars
+    int x=1,y=1,ysize=0;
+    for (i = 0; i < font->n_chars; i++) {
+      j = charptr[i]*4*8;
+      if (!intraFontGetGlyph(font->fontdata, &j, PGF_CHARGLYPH, advancemap, &(font->glyph[i]))) {
+        free(advancemap);      
+        free(ucs_shadowmap);
+        free(charptr);
+        intraFontUnload(font);
+        return NULL;
+      }
+      if (!(font->glyph[i].flags & PGF_BMP_H_ROWS) != !(font->glyph[i].flags & PGF_BMP_V_ROWS)) { //H_ROWS xor V_ROWS (real glyph, not overlay)
+        if (font->glyph[i].height > font->texYSize) font->texYSize = font->glyph[i].height;     //find max glyph height      
+        if ((x + font->glyph[i].width) > font->texWidth) {                             
+          y += ysize+1;
+          x = 1;
+          ysize = 0;
+        } 
+        if (font->glyph[i].height > ysize) ysize = font->glyph[i].height;
+        x += font->glyph[i].width+1;
+      }    
+    } 
+  
+    //populate shadows and count space (only for chars needed)
+    unsigned short char_id, shadow_id = 0;
+    for (i = 0; i < font->n_chars; i++) {
+      shadow_id = font->glyph[i].shadowID;
+      char_id = intraFontGetID(font,ucs_shadowmap[shadow_id]);
+      if (char_id < font->n_chars && font->shadowGlyph[shadow_id].shadowID == 0) { //valid char and shadow glyph not yet loaded
+        j = charptr[char_id]*4*8;
+        if (!intraFontGetGlyph(font->fontdata, &j, PGF_SHADOWGLYPH, NULL, &(font->shadowGlyph[shadow_id]))) {
+          free(advancemap);      
+          free(ucs_shadowmap);
+          free(charptr);
+          intraFontUnload(font);
+          return NULL;
+        }      
+        if (!(font->shadowGlyph[shadow_id].flags & PGF_BMP_H_ROWS) != !(font->shadowGlyph[shadow_id].flags & PGF_BMP_V_ROWS)) { //H_ROWS xor V_ROWS (real glyph, not overlay)
+          if (font->shadowGlyph[shadow_id].height > font->texYSize) font->texYSize = font->shadowGlyph[shadow_id].height;     //find max glyph height
+          if ((x + font->shadowGlyph[shadow_id].width) > font->texWidth) {                          
+            y += ysize+1;
+            x = 1;
+            ysize = 0;
+          } 
+          if (font->shadowGlyph[shadow_id].height > ysize) ysize = font->shadowGlyph[shadow_id].height;
+          x += font->shadowGlyph[shadow_id].width+1;
+        }
+      }                  
+    }
+  
+    //free temp stuff
+    free(advancemap);
+    free(ucs_shadowmap);
+    free(charptr);
+  
+    //cache chars, swizzle texture and free unneeded stuff (if INTRAFONT_CACHE_ALL or _ASCII)
+    sceKernelDcacheWritebackAll();
+    if ( (options & INTRAFONT_CACHE_ASCII) && ((y + ysize + 1) <= font->texHeight) ) { //cache all and does it fit into cache?
+      if (!intraFontPreCache(font,options)) {
+        intraFontUnload(font);
+        return NULL;      
+      }
+    }
+    
+  } else { //FILETYPE_BWFON
+
+    //read raw fontdata
+    buffer_pos = 0;
+    font->fontdata = (unsigned char*)malloc((filesize+40)*sizeof(unsigned char));
+    if (font->fontdata == NULL) {
+      intraFontUnload(font);
+      return NULL;
+    }
+    memcpy(font->fontdata, font_buffer + buffer_pos, filesize*sizeof(unsigned char));
+    memcpy(font->fontdata+filesize,bw_shadow,40);
+
+    //count ascii chars and reduce mem required: no ascii chars in bwfon -> abort
+    if ((options & PGF_CACHE_MASK) == INTRAFONT_CACHE_ASCII) {
+      intraFontUnload(font);
+      return NULL;
+    }  
+  
+    //populate chars and count space used in cache to prebuffer all chars: not needed/available -> skip
+    //populate shadows and count space (only for chars needed): not needed/available -> skip
+    //free temp stuff: not needed -> skip
+    //cache chars, swizzle texture and free unneeded stuff (if INTRAFONT_CACHE_ALL or _ASCII): not available ->skip
+
+  }
+
+  sceKernelDcacheWritebackAll();
+
+  return font;
 }
 
 intraFont* intraFontLoad(const char *filename, unsigned int options) {

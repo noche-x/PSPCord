@@ -34,6 +34,7 @@ public:
 	void initFonts(const char* path);
 	void setFonts(float size, unsigned int color, unsigned int shadowColor, float angle, unsigned int options);
 
+	void print(int x, int y, const char* message);
 	void printf(int x, int y, const char *message, ...);
 
 private:

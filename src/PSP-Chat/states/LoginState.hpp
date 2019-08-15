@@ -30,7 +30,7 @@ public:
 	};
 
 	void draw() {
-		g_RenderUtil.printf(20, 20, "LoginState Draw Called!");
+		g_RenderUtil.print(20, 20, "LoginState Draw Called!");
 	};
 
 private:
