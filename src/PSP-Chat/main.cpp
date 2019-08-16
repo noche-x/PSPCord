@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 	g_RenderUtil.init();
 	g_RenderUtil.initFonts("flash0:/font/ltn0.pgf");
 
-	//g_AudioManager.Init();
+	g_AudioManager.Init();
 	
 	LoginState* loginState = new LoginState();
 	loginState->init();
@@ -43,16 +43,18 @@ int main(int argc, char* argv[])
 		g_RenderUtil.frameBegin();
 		g_RenderUtil.frameClear();
 		
-		bg->SetPosition(0.f, 0.f);
-		bg->Scale(2.f, 2.f);
-		bg->Draw();
+		//bg->SetPosition(0.f, 0.f);
+		//bg->Scale(2.f, 2.f);
+		//bg->Draw();
 
-		g_StateManager.draw();
+		//g_StateManager.draw();
+
+		g_RenderUtil.printf(20, 20, "aaaaaaa");
 
 		g_RenderUtil.frameEnd();
 
-		if (input.isActionDown(PSP_CROSS))
-			g_StateManager.pushState(connectingState);
+		//if (input.isActionDown(PSP_CROSS))
+		//	g_StateManager.pushState(connectingState);
 	}
 	
 
