@@ -1,7 +1,5 @@
 #include "..//framework/state/AppState.hpp"
 #include "..//framework/gfx/RenderUtil.h"
-#include "..//framework/gfx/Texture.h"
-#include "..//framework/gfx/TextureUtil.h"
 
 class LoginState : public AppState {
 public:
@@ -30,7 +28,7 @@ public:
 	};
 
 	void draw() {
-		g_RenderUtil.print(20, 20, "LoginState Draw Called!");
+		g_RenderUtil.printf(20, 20, "LoginState Draw Called!");
 	};
 
 private:

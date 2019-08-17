@@ -1,7 +1,5 @@
 #include "..//framework/state/AppState.hpp"
 #include "..//framework/gfx/RenderUtil.h"
-#include "..//framework/gfx/Texture.h"
-#include "..//framework/gfx/TextureUtil.h"
 
 class ConnectingState : public AppState {
 public:

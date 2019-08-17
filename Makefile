@@ -4,8 +4,7 @@ src/PSP-Chat/framework/utils/common.o \
 src/PSP-Chat/framework/utils/Input.o \
 src/PSP-Chat/framework/utils/MemoryUsage.o \
 src/PSP-Chat/framework/utils/Timer.o \
-src/PSP-Chat/framework/utils/vfram.o \
-src/PSP-Chat/framework/utils/vram.o \
+src/PSP-Chat/framework/utils/valloc.o \
 src/PSP-Chat/framework/audio/sound_utils/audio.o \
 src/PSP-Chat/framework/audio/sound_utils/bgm.o \
 src/PSP-Chat/framework/audio/sound_utils/media.o \
@@ -17,6 +16,7 @@ src/PSP-Chat/framework/gfx/intrafont/intraFont.o \
 src/PSP-Chat/framework/gfx/TextureUtil.o \
 src/PSP-Chat/framework/gfx/RenderUtil.o \
 src/PSP-Chat/framework/gfx/Sprite.o \
+src/PSP-Chat/framework/gfx/intrafont/glib2d.o \
 src/PSP-Chat/framework/state/StateManager.o \
 
 INCDIR = $(PSPPATH)/include include include/archive include/menus

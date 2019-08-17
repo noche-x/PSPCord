@@ -10,6 +10,7 @@
 #include <psptypes.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include "intrafont/glib2d.h"
 #include "intraFont/intraFont.h"
 
 
@@ -21,20 +22,18 @@ class RenderUtil {
 public:
 	
 	//Rendering Engine
-	void init();
+	void init(const char* path);
 
-	void frameBegin(bool dialog = false);
-	void frameEnd(bool dialog = false);
+	void image(g2dTexture* tex, float x, float y);
 
-	void frameClear();
-	void setClearColor(int r, int g, int b, int a);
+	void frameBegin();
+	void frameEnd();
 
+	void frameClear(g2dColor color);
 
 	//Font Engine
-	void initFonts(const char* path);
 	void setFonts(float size, unsigned int color, unsigned int shadowColor, float angle, unsigned int options);
 
-	void print(int x, int y, const char* message);
 	void printf(int x, int y, const char *message, ...);
 
 private:
