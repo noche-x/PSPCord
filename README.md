@@ -5,9 +5,9 @@
 
 ## Info
 PSP-Chat is an application that lets you talk with other users on your PSP. Currently this project is in it's early stages, but more will be coming soon. 
- 
+
 ## Building & Installation
-Until the project is fully functional, we will not provide a release. In order to build the project you need the [minimalistic psp sdk](https://sourceforge.net/projects/minpspw/). After you install it go into the psp-chat folder and edit the path on the **!build_psp_chat.bat** also on **!clean_psp_chat.bat** then run **!build_psp_chat.bat**. Then you can manually drag and drop the PSP-Chat folder in *PSP-Chat*/output/PSP-Chat to *PSP DRIVE*/PSP/GAME but you can automate this proccess by changing the drive letter in **!upload_psp_chat.bat**.
+Until the project is fully functional, we will not provide a release. In order to build the project you need the [minimalistic psp sdk](https://sourceforge.net/projects/minpspw/). After you install it go and right click **My Computer**, select **Properties**, click on **Advanced System Settings**, go into **Advanced tab** and click on **Environment Variables**, on the **System Variables** find **PATH** and Edit it, select **New** and input your **SDK install directory**, click **Ok** and you're done with this part. After all of that go into the psp-chat folder run **build.bat**. Then you can manually drag and drop the **PSP-Chat** folder in *PSP-Chat/output/PSP-Chat* to *PSP DRIVE*/PSP/GAME.
  
  ## TODOs
 Our main focus is currently the gui.
