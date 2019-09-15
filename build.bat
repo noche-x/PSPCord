@@ -1,3 +1,4 @@
+make clean
 make all
 move psp-chat.elf output\PSP-Chat
 move psp-chat.prx output\PSP-Chat

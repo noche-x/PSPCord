@@ -24,11 +24,15 @@ public:
 	};
 
 	void update() {
-
+		Gui::update();
 	};
 
 	void draw() {
-		g_RenderUtil.printf(20, 20, "ConnectingState Draw Called!");
+		GuiPosition pos;
+		Gui::begin(CENTERRIGHT, 200, 100);
+		Gui::text("fuck");
+		Gui::text("yeah");
+		//g_RenderUtil.printf(20, 20, "ConnectingState Draw Called!");
 	};
 
 private:

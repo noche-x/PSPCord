@@ -26,15 +26,16 @@ int main(int argc, char* argv[])
 	g_RenderUtil.init("flash0:/font/ltn0.pgf");
 
 	LoginState* loginState = new LoginState();
-	loginState->init();
 	ConnectingState* connectingState = new ConnectingState();
+	loginState->init();
+	connectingState->init();
+
 	g_StateManager.changeState(loginState);
 
 	g2dTexture* bg = g2dTexLoad("data/background.png", G2D_SWIZZLE);
 	
 	while (isRunning()) {
 		g_StateManager.update();
-		input.Update();
 
 		g_RenderUtil.frameBegin();
 		g_RenderUtil.frameClear(G2D_RGBA(80, 80, 80, 255));
@@ -45,8 +46,6 @@ int main(int argc, char* argv[])
 		
 		g_RenderUtil.frameEnd();
 
-		if (input.isActionDown(PSP_CROSS))
-			g_StateManager.pushState(connectingState);
 	}
 	
 

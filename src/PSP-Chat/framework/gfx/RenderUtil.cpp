@@ -19,6 +19,16 @@ void RenderUtil::image(g2dTexture* tex, float x, float y)
 	g2dEnd();
 }
 
+void RenderUtil::rect(float x, float y, float width, float height, g2dColor color) {
+	g2dBeginRects(NULL);
+	g2dSetColor(color);
+	g2dSetCoordMode(G2D_UP_LEFT);
+	g2dSetScaleWH(width, height);
+	g2dSetCoordXY(x, y);
+	g2dAdd();
+	g2dEnd();
+}
+
 void RenderUtil::frameBegin()
 {
 	g2dClear(G2D_RGBA(80, 80, 80, 255));
@@ -41,6 +51,15 @@ void RenderUtil::frameClear(g2dColor color)
 void RenderUtil::setFonts(float size, unsigned int color, unsigned int shadowColor, float angle, unsigned int options)
 {
 	intraFontSetStyle(font, size, color, shadowColor, angle, options);
+}
+
+void RenderUtil::print(int x, int y, const char* message)
+{
+	intraFontPrint(font, x, y, message);
+}
+
+float RenderUtil::calculateTextLength(const char* message) {
+	return intraFontMeasureText(font, message);
 }
 
 void RenderUtil::printf(int x, int y, const char * message, ...)

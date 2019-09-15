@@ -13,9 +13,7 @@ src/PSP-Chat/framework/audio/sound_utils/VirtualFile.o \
 src/PSP-Chat/framework/audio/AudioManager.o \
 src/PSP-Chat/framework/gfx/intrafont/libccc.o \
 src/PSP-Chat/framework/gfx/intrafont/intraFont.o \
-src/PSP-Chat/framework/gfx/TextureUtil.o \
 src/PSP-Chat/framework/gfx/RenderUtil.o \
-src/PSP-Chat/framework/gfx/Sprite.o \
 src/PSP-Chat/framework/gfx/intrafont/glib2d.o \
 src/PSP-Chat/framework/state/StateManager.o \
 
