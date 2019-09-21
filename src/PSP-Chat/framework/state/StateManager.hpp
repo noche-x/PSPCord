@@ -9,10 +9,12 @@ class StateManager{
         void changeState(AppState* state);
         void pushState(AppState* state);
         void popState();
+        AppState* getState();
 
         void update();
         void draw();
 
+        int returnVal();
     private:
         std::vector<AppState*> states;
 };

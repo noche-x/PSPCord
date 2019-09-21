@@ -1,11 +1,17 @@
+#pragma once
+
 #include "..//framework/state/AppState.hpp"
 #include "..//framework/gfx/RenderUtil.h"
 #include "..//framework/gfx/gui/Gui.h"
+#include "..//Globals.h"
+#include "../framework/utils/Timer.h"
 
 class LoginState : public AppState {
 public:
 	void init() {
 		Gui::init(0.5f, 0xFFFFFFFF, 0x00000000, 0.f, INTRAFONT_ALIGN_LEFT);
+		returnValue = 0;
+		sceKernelDelayThread(100000);
 	};
 
 	void enter() {
@@ -17,36 +23,48 @@ public:
 	};
 
 	void pause() {
-	
+		returnValue = 0;
 	};
 
 	void resume() {
-	
+		returnValue = 0;
+		sceKernelDelayThread(100000);
 	};
 
 	void update() {
+		Gui::selectableItemActive = false;
 		Gui::update();
 	};
 
 	void draw() {
-		GuiPosition pos;
 		Gui::begin(CENTER, 315, 215);
+		
 		Gui::text("Please enter your details and the server's IP");
-		Gui::textInput("ip");
-		Gui::textInput("username");
-		Gui::textInput("password");
-		Gui::button("login");
+		
+		static char ip[25];
+		static char username[25];
+		static char password[25];
 
-		for (int i = 0; i < Gui::textInputArray.size(); i++) {
-			textInputText text = Gui::textInputArray.at(i);
-			Gui::text("textInputArray : %i : %s", text.itemCount, text.text);
+		Gui::textInput("ip", ip);
+		Gui::textInput("username", username);
+		Gui::textInput("password", password);
+
+		Gui::text("%s", ip);
+		Gui::text("%s", username);
+		Gui::text("%s", password);
+
+		Gui::text("%s", Gui::selectableItemActive ? "true" : "false");
+
+		if (Gui::button("login")) {
+			strcpy(globalVariables::_ip, ip);
+			Gui::selectableItemActive = false;
+			returnValue = 1;
 		}
-
-		//Gui::text("selectedItem : %i", Gui::selectedItem);
-		//Gui::text("itemCount : %i", Gui::itemCount);
-		//Gui::text("selectableItemCount : %i", Gui::selectableItemCount);
-
 	};
 
+	int returnVal() {
+		return returnValue;
+	}
 private:
+	int returnValue;
 };

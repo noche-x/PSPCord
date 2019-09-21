@@ -1,3 +1,5 @@
+#pragma once
+
 #include "..//RenderUtil.h"
 #include "..//..//utils/Input.h"
 #include <vector>
@@ -239,10 +241,12 @@ namespace Gui {
 		g_RenderUtil.printf(x + (m_width / 2), (y + itemPaddingY) + (itemCount * itemSpacingFactor), label);
 		Gui::setTextStyle(textSize, textColor, textShadowColor, textAngle, INTRAFONT_ALIGN_LEFT);
 
+		if (currentItem == selectedItem && selectableItemActive == true) 
+			return true;
 		return false;
 	}
 
-	void textInput(const char* label) {
+	void textInput(const char* label, char* buf) {
 		int currentItem = selectableItemCount;
 		itemCount++;
 		selectableItemCount++;
@@ -251,15 +255,11 @@ namespace Gui {
 		if (currentItem == selectedItem) {
 			selected = 0x00202020;
 		}
-
+		
 		std::string field = "";
 
-		if (!textInputArray.empty()) {
-			for (size_t i = 0; i < textInputArray.size(); i++)
-				if (itemCount == textInputArray.at(i).itemCount) {
-					field = textInputArray.at(i).text;
-				}
-		}
+		if (buf != "")
+			field = buf;
 
 		if (currentItem == selectedItem && selectableItemActive == true) {
 			unsigned short temp[128];
@@ -280,15 +280,9 @@ namespace Gui {
 				field = conv;
 			}
 			selectableItemActive = false;
-			if (!textInputArray.empty())
-				for (size_t i = 0; i < textInputArray.size(); i++)
-					if (itemCount == textInputArray.at(i).itemCount)
-						textInputArray.erase(textInputArray.begin() + i);
 
-			textInputText text;
-			text.itemCount = itemCount;
-			text.text = conv.c_str();
-			textInputArray.push_back(text);
+			strcpy(buf, conv.c_str());
+			//buf = conv.c_str();
 		}
 		
 		std::string display = "";
@@ -301,6 +295,5 @@ namespace Gui {
 		g_RenderUtil.rect(x + itemPaddingX, (y + itemPaddingY - 12) + (itemCount * itemSpacingFactor), m_width - 14, 18, Colors::foreGround + selected);
 		g_RenderUtil.printf(x + itemPaddingX + 4, (y + itemPaddingY) + (itemCount * itemSpacingFactor), display.c_str());
 	}
-
 
 }

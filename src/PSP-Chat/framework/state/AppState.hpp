@@ -12,6 +12,7 @@ class AppState{
         virtual void update() = 0;
         virtual void draw() = 0;
 
+        virtual int returnVal() = 0;
     protected:
 		AppState() {}                             
 };

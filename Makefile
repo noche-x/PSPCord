@@ -1,5 +1,6 @@
 TARGET = psp-chat
 OBJS = src/PSP-Chat/main.o \
+src/PSP-Chat/Globals.o \
 src/PSP-Chat/framework/utils/common.o \
 src/PSP-Chat/framework/utils/Input.o \
 src/PSP-Chat/framework/utils/MemoryUsage.o \
