@@ -23,16 +23,14 @@ public:
 	};
 
 	void pause() {
-		returnValue = 0;
+
 	};
 
 	void resume() {
-		returnValue = 0;
-		sceKernelDelayThread(100000);
+		
 	};
 
 	void update() {
-		Gui::selectableItemActive = false;
 		Gui::update();
 	};
 
