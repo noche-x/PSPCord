@@ -13,6 +13,7 @@ class StateManager{
         void update();
         void draw();
 
+        AppState* currentState();
     private:
         std::vector<AppState*> states;
 };

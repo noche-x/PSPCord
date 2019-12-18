@@ -43,4 +43,8 @@ void StateManager::draw(){
     states.back()->draw();
 }
 
+AppState* StateManager::currentState(){
+    return states.back();
+}
+
 StateManager g_StateManager = StateManager();

@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <string>
 #include <iostream>
-#include "framework/audio/AudioManager.hpp"
 #include "framework/gfx/RenderUtil.h"
 #include "framework/state/StateManager.hpp"
 #include "states/LoginState.hpp"
@@ -46,7 +45,18 @@ int main(int argc, char* argv[])
 		g_RenderUtil.frameEnd();
 
 		if (input.isActionDown(PSP_CROSS))
-			g_StateManager.pushState(connectingState);
+			switch (g_StateManager.currentState())
+			{
+			case loginState:
+				g_StateManager.pushState(connectingState);
+				break;
+			case connectingState:
+				g_StateManager.pushState(loginState);
+				break;
+			
+			default:
+				break;
+			}
 	}
 	
 

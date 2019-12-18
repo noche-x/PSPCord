@@ -11,7 +11,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include "intrafont/glib2d.h"
-#include "intraFont/intraFont.h"
+#include "intrafont/intraFont.h"
 
 
 #define BUF_WIDTH (512)
