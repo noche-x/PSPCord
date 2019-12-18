@@ -11,14 +11,13 @@ PSP-Chat is an **UNOFFICIAL** Discord client for your PSP. Currently this projec
 Until the project is fully functional, we will not provide a release. 
 
 #### Prerequisites 
-In order to build the project you need the [**minimalistic psp sdk**](https://sourceforge.net/projects/minpspw/).
+In order to build the project you need the [**top-sekret/psptoolchain**](https://github.com/top-sekret/psptoolchain).
 
-After you install it go and right click **My Computer**, select **Properties**, click on **Advanced System Settings**, go into **Advanced tab** and click on **Environment Variables**, on the **System Variables** find **PATH** and Edit it, select **New** and input your **SDK install directory**, click **Ok** and you're done with this part. 
+After you clone it you can follow the steps provided on that repo.
 
-This needs to be done because PSP SDK's path may vary over everone so this makes it local to your computer.
+1. Run **./build.sh** and it will compile the psp client.
+~~2. Drag and drop the **PSP-Chat** folder in *PSP-Chat/output/PSP-Chat* to *PSP DRIVE*/PSP/GAME~~
+2. Copy **EBOOT.PBP, PARAM.SFO, psp-chat.elf, psp-chat.prx** to /PSP/GAME/PSP-Chat/
 
-1. Run **build.bat** and it will compile both the server and the psp client.
-2. Drag and drop the **PSP-Chat** folder in *PSP-Chat/output/PSP-Chat* to *PSP DRIVE*/PSP/GAME
-
-And you should be able to see it in your PSP.
+And you should be able to see it in your PSP and launch it.
  
