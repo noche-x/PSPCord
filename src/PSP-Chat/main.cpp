@@ -44,19 +44,13 @@ int main(int argc, char* argv[])
 		
 		g_RenderUtil.frameEnd();
 
-		if (input.isActionDown(PSP_CROSS))
-			switch (g_StateManager.currentState())
-			{
-			case loginState:
+		if (input.isActionDown(PSP_CROSS)) {
+			if (g_StateManager.currentState() == loginState)
 				g_StateManager.pushState(connectingState);
-				break;
-			case connectingState:
+				
+			if (g_StateManager.currentState() == connectingState)
 				g_StateManager.pushState(loginState);
-				break;
-			
-			default:
-				break;
-			}
+		}
 	}
 	
 
