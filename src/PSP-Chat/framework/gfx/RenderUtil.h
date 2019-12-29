@@ -34,8 +34,13 @@ public:
 	//Font Engine
 	void setFonts(float size, unsigned int color, unsigned int shadowColor, float angle, unsigned int options);
 
+	void print(int x, int y, const char *message);
+
 	void printf(int x, int y, const char *message, ...);
 
+	void rect(float x, float y, float width, float height, g2dColor color);
+
+	float calculateTextLength(const char* message);
 private:
 	unsigned int __attribute__((aligned(16))) list[262144];
 	unsigned int clearColor;

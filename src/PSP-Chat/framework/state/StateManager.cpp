@@ -35,12 +35,24 @@ void StateManager::popState(){
     }
 }
 
+AppState* StateManager::getState(){
+    if(!states.empty()){
+        return states.back();
+    }
+
+    return 0;
+}
+
 void StateManager::update(){
     states.back()->update();
 }
 
 void StateManager::draw(){
     states.back()->draw();
+}
+
+int StateManager::returnVal() {
+    return states.back()->returnVal();
 }
 
 AppState* StateManager::currentState(){
