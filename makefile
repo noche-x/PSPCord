@@ -10,9 +10,8 @@ src/PSP-Chat/framework/gfx/intrafont/libccc.o \
 src/PSP-Chat/framework/gfx/intrafont/intraFont.o \
 src/PSP-Chat/framework/gfx/RenderUtil.o \
 src/PSP-Chat/framework/gfx/intrafont/glib2d.o \
-src/PSP-Chat/framework/state/StateManager.o \
 
-INCDIR = $(PSPPATH)/include
+INCDIR = $(PSPPATH)/include /usr/local/pspdev/psp/sdk/include
 INCDIR += include include/archive include/menus src/PSP-Chat/
 CFLAGS = -O3 -G0 -mpreferred-stack-boundary=4
 CXXFLAGS = -std=gnu++17

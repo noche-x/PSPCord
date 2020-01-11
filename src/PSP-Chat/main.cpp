@@ -4,70 +4,111 @@
 #include <pspdebug.h>
 #include <pspdisplay.h>
 #include <pspctrl.h>
+
 #include <stdio.h>
+
 #include <string>
 #include <iostream>
-#include "framework/gfx/RenderUtil.h"
-#include "framework/state/StateManager.hpp"
-#include "Globals.h"
-#include "states/LoginState.hpp"
-#include "states/ConnectingState.hpp"
-#include "framework/utils/Input.h"
-#include "framework/gfx/intrafont/glib2d.h"
 
+#include "Globals.h"
+#include "framework/utils/Input.h"
+#include "framework/gfx/RenderUtil.h"
+#include "framework/gfx/intrafont/glib2d.h"
+#include "framework/gfx/RenderUtil.h"
+#include "framework/gfx/gui/Gui.h"
+#include "framework/connection/ConnectionManager.h"
+
+// needed for psp module
 PSP_MODULE_INFO("PSP CHAT", PSP_MODULE_USER, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER); 
 PSP_HEAP_SIZE_MAX();
 
 int main(int argc, char* argv[])
 {
+	// basically makes the home button display the psp's own home menu
+	// more on common.cpp
 	setupExitCallback();
 	
+	ConnectionManager connection("192.168.2.189", 35412);
+
+	// using psp's own latin font
 	g_RenderUtil.init("flash0:/font/ltn0.pgf");
 
-	LoginState* loginState = new LoginState();
-	ConnectingState* connectingState = new ConnectingState();
-	loginState->init();
-	connectingState->init();
-
-	g_StateManager.changeState(loginState);
-
+	// create the background texture
 	g2dTexture* bg = g2dTexLoad("data/background.png", G2D_SWIZZLE);
 	
-	while (isRunning()) {
-		g_StateManager.update();
+	// initialize the gui
+	Gui::init(0.5f, 0xFFFFFFFF, 0x00000000, 0.f, INTRAFONT_ALIGN_LEFT);
+	
+	// text input variables
+	char ip[25];
+	char username[25];
+	char password[25];
+	
+	// login page, connecting page ...
+	int page = 0;
 
+	// main loop
+	while (isRunning()) {
+		// begin renderer frame
 		g_RenderUtil.frameBegin();
+		// clear the screen with a color
 		g_RenderUtil.frameClear(G2D_RGBA(80, 80, 80, 255));
 
-		g_RenderUtil.image(bg, 0, 0);
+		// display the background image
+		// too distracting, until its changed its removed
+		//g_RenderUtil.image(bg, 0, 0);
 
-		g_StateManager.draw();
-		if (g_StateManager.getState() == loginState && g_StateManager.returnVal() == 1)
-			g_StateManager.pushState(connectingState);
-		if (g_StateManager.getState() == connectingState && g_StateManager.returnVal() == 1)
-			g_StateManager.popState();
-
-		int m_state = 0;
-
-		if (g_StateManager.getState() == loginState)
-			m_state = 1;
-
-		if (g_StateManager.getState() == connectingState)
-			m_state = 2;
-
-		g_RenderUtil.printf(20, 20, "%i", g_StateManager.returnVal());
-		g_RenderUtil.printf(40, 20, "%i", m_state);
+		// begin the gui
+		Gui::begin(CENTER, 315, 215);
 		
-		g_RenderUtil.frameEnd();
+		// switch between pages, login, connecting ...
+		switch (page)
+		{
+		// login page
+		case 0:
+			Gui::text("Please enter your details and the server's IP");
+			
+			Gui::textInput("ip", ip);
+			Gui::textInput("username", username);
+			Gui::textInput("password", password);
 
-		if (input.isActionDown(PSP_CROSS)) {
-			if (g_StateManager.currentState() == loginState)
-				g_StateManager.pushState(connectingState);
-				
-			if (g_StateManager.currentState() == connectingState)
-				g_StateManager.pushState(loginState);
+			Gui::text("%s", ip);
+			Gui::text("%s", username);
+			Gui::text("%s", password);
+
+			Gui::text("%s", Gui::selectableItemActive ? "true" : "false");
+
+			if (Gui::button("login")) {
+				strcpy(globalVariables::_ip, ip);
+				Gui::selectableItemActive = false;
+				page = 1;
+				sceKernelDelayThread(1000000);				
+			}			
+			break;
+		// connecting page
+		case 1:
+			Gui::text("Trying to connect to the server.");	
+
+			if (Gui::button("back")) {
+				Gui::selectableItemActive = false;
+				page = 0;
+				sceKernelDelayThread(1000000);
+			}
+			break;
+		// main page
+		case 2:
+			Gui::text("Sending \"Hello World\" message to the server...");
+			break;
+		// invalid
+		default:
+			Gui::text("This is a invalid state please report this issue on GitHub.");
+			break;
 		}
+
+		Gui::update();
+		// end the current frame
+		g_RenderUtil.frameEnd();
 	}
 	
 
