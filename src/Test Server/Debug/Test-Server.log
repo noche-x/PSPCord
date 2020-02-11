@@ -1,3 +1,0 @@
-﻿D:\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(438,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  Main.cpp
-  Test-Server.vcxproj -> C:\Users\user\Desktop\PSP-Chat\src\Test Server\..\..\output\Test Server\Test-Server.exe

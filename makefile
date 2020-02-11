@@ -10,6 +10,7 @@ src/PSP-Chat/framework/gfx/intrafont/libccc.o \
 src/PSP-Chat/framework/gfx/intrafont/intraFont.o \
 src/PSP-Chat/framework/gfx/RenderUtil.o \
 src/PSP-Chat/framework/gfx/intrafont/glib2d.o \
+src/PSP-Chat/framework/connection/ConnectionManager.o \
 
 INCDIR = $(PSPPATH)/include /usr/local/pspdev/psp/sdk/include
 INCDIR += include include/archive include/menus src/PSP-Chat/
@@ -22,8 +23,8 @@ PSP_FW_VERSION=371
 PSP_LARGE_MEMORY = 0 #PHAT SUPPORT! Our app isn't that big! 
 
 LDFLAGS =
-# -losl -lmmio
-STDLIBS = -lpng -lz \
+# -losl -lmmio -lpng
+STDLIBS =  -lz \
           -lpsphprm -lpspsdk -lpspctrl -lpsprtc -lpsppower -lpspgum -lpspgu -lpsphttp -lpspssl -lpspwlan \
           -lpspnet_adhocmatching -lpspnet_adhoc -lpspnet_adhocctl -lm -ljpeg \
           -lpspusb -lpspusbstor \

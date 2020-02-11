@@ -26,6 +26,11 @@
 #include <malloc.h>
 #include <valloc.h>
 #include <math.h>
+#include <stdio.h>
+
+#ifdef USE_PNG
+#undef USE_PNG
+#endif
 
 #ifdef USE_PNG
 #include <png.h>

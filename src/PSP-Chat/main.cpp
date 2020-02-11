@@ -9,6 +9,7 @@
 
 #include <string>
 #include <iostream>
+#include <sstream>
 
 #include "Globals.h"
 #include "framework/utils/Input.h"
@@ -23,13 +24,24 @@ PSP_MODULE_INFO("PSP CHAT", PSP_MODULE_USER, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER); 
 PSP_HEAP_SIZE_MAX();
 
+namespace std
+{
+    template < typename T > std::string to_string( const T& n )
+    {
+        std::ostringstream stm ;
+        stm << n ;
+        return stm.str() ;
+    }
+}
+
+
 int main(int argc, char* argv[])
 {
 	// basically makes the home button display the psp's own home menu
 	// more on common.cpp
 	setupExitCallback();
 	
-	ConnectionManager connection("192.168.2.189", 35412);
+	ConnectionManager connection;
 
 	// using psp's own latin font
 	g_RenderUtil.init("flash0:/font/ltn0.pgf");
@@ -46,7 +58,7 @@ int main(int argc, char* argv[])
 	char password[25];
 	
 	// login page, connecting page ...
-	int page = 0;
+	int page = -1;
 
 	// main loop
 	while (isRunning()) {
@@ -65,6 +77,27 @@ int main(int argc, char* argv[])
 		// switch between pages, login, connecting ...
 		switch (page)
 		{
+		// connect to the primary network page
+		case -1:
+			Gui::text("trying to connect to the primary network");
+			while (isRunning()) {
+				int connect_state = connection.GetConnectionState();
+				if (connect_state < 4) {
+					Gui::text(connection.GetErrorCode());
+				}
+				else if (connect_state > 4) {
+					Gui::text("connection state : %i", connection.GetConnectionState());
+				}
+				else if (connect_state == 4) {
+					Gui::text("connected");
+					sceKernelDelayThread(3000000);
+					page = 0;
+					break;
+				}
+
+				Gui::update();
+			}
+			break;
 		// login page
 		case 0:
 			Gui::text("Please enter your details and the server's IP");
@@ -89,21 +122,26 @@ int main(int argc, char* argv[])
 		// connecting page
 		case 1:
 			Gui::text("Trying to connect to the server.");	
+			
+			int ret = connection.Connect("192.168.2.190");
+			if (ret == 0) {
+				Gui::text("Connection ESTHABLISHED!");
+				if (connection.SendMessage("hello from psp chat"))
+					Gui::text("MESSAGE SENT");
 
+				const char* recv_message = connection.RecvMessage();
+				if (recv_message != " ")
+					Gui::text(recv_message);
+			}
+
+			
 			if (Gui::button("back")) {
 				Gui::selectableItemActive = false;
 				page = 0;
 				sceKernelDelayThread(1000000);
 			}
 			break;
-		// main page
-		case 2:
-			Gui::text("Sending \"Hello World\" message to the server...");
-			break;
-		// invalid
-		default:
-			Gui::text("This is a invalid state please report this issue on GitHub.");
-			break;
+			
 		}
 
 		Gui::update();
