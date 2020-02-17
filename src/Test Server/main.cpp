@@ -24,7 +24,7 @@ int main(int argc , char *argv[])
 	server.sin_port = htons( 35700 );
 	
 	//Bind
-	if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) &lt; 0)
+	if( bind(socket_desc,(struct sockaddr *)&server , sizeof(server)) < 0)
 	{
 		//print the error message
 		perror("bind failed. Error");
@@ -40,8 +40,8 @@ int main(int argc , char *argv[])
 	c = sizeof(struct sockaddr_in);
 	
 	//accept connection from an incoming client
-	client_sock = accept(socket_desc, (struct sockaddr *)&amp;client, (socklen_t*)&amp;c);
-	if (client_sock &lt; 0)
+	client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t*)&c);
+	if (client_sock < 0)
 	{
 		perror("accept failed");
 		return 1;
@@ -49,7 +49,7 @@ int main(int argc , char *argv[])
 	puts("Connection accepted");
 	
 	//Receive a message from client
-	while( (read_size = recv(client_sock , client_message , 2000 , 0)) &gt; 0 )
+	while( (read_size = recv(client_sock , client_message , 2000 , 0)) > 0 )
 	{
 		//Send the message back to client
 		write(client_sock , client_message , strlen(client_message));

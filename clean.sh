@@ -1,2 +1,2 @@
-./path.sh
+. path.sh
 make clean

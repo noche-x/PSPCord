@@ -1,40 +1,9 @@
 #include "ConnectionManager.h"
 #include <string>
+#include <sstream>
+#include <pspkernel.h>
 
 ConnectionManager::ConnectionManager() {
-	//We need to load some basic kernel modules in order to use networking features
-	sceUtilityLoadNetModule(PSP_NET_MODULE_COMMON); //All sceNetCommands
-	sceUtilityLoadNetModule(PSP_NET_MODULE_INET); //All sceInetCommands (including the socket library)
-	sceUtilityLoadNetModule(PSP_NET_MODULE_SSL); //Unused, but you can use SSL functions if you need.
-
-	//Result stores our codes from the initialization process
-	int result = 0;
-
-	result = sceNetInit(128 * 1024, 42, 0, 42, 0); //Creates the network manager with a buffer
-	if (result < 0) { //These If Blocks close the game on an error
-		error = "ConnectionManager::ConnectionManager unable to init network manager";
-	}
-
-	result = sceNetInetInit(); //Initializes Inet
-	if (result < 0) {
-		error = "ConnectionManager::ConnectionManager unable to init inet";
-	}
-
-	result = sceNetApctlInit(0x10000, 48); //Initializes Access Point Control
-	if (result < 0) {
-		error = "ConnectionManager::ConnectionManager unable to init access point control";
-	}
-
-	result = sceNetResolverInit(); //Initializes DNS resolver (unused)
-	if (result < 0) {
-		error = "ConnectionManager::ConnectionManager unable to init dns resolver";
-	}
-
-	result = sceNetApctlConnect(1);	//Connects to your first (primary) internet connection.
-    if (result < 0) {
-		error = "ConnectionManager::ConnectionManager unable to connect to the primary internet connection";
-	}
-
 	m_port = 35700;
 }
 
@@ -43,13 +12,12 @@ ConnectionManager::~ConnectionManager() {
 }
 
 // this should be in a for state until the state returns 4
-int ConnectionManager::GetConnectionState() {
-	int state;
-	
-	if (sceNetApctlGetState(&state) < 0)
+int ConnectionManager::GetConnectionState(int state) {	
+	int ret = sceNetApctlGetState(&state);
+	if (ret != 0)
 		error = "ConnectionManager::GetConnectionState unable to get the connection state (is your network online?)";
 
-	return state;
+	return ret;
 }
 
 int ConnectionManager::CreateSocket() {
@@ -77,12 +45,17 @@ int ConnectionManager::Connect(const char* ipadd) {
 
 	name.sin_family = AF_INET;
 	name.sin_port = sceAllegrexWsbh(m_port);
-
+// AF_INET
 	inet_pton(AF_INET, m_ip, &name.sin_addr.s_addr);
 	
-	int ret = -1;
-	if (ret = connect(m_socket, (struct sockaddr*) & name, sizeof(name)) < 0)
-		error = "ConnectionManager::Connect unable to connect to the given ip";
+	int ret = connect(m_socket, (struct sockaddr*) & name, sizeof(name));
+	int filenameIndex = errno;      
+	std::stringstream temp_str;
+	temp_str<<(filenameIndex);
+	std::string str = temp_str.str();
+	const char* cstr2 = str.c_str();
+	if (ret < 0)
+		error = cstr2;
 	
 	return ret;
 }

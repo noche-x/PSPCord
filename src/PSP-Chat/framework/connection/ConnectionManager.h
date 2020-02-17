@@ -1,21 +1,7 @@
-#include <pspsdk.h>
-#include <pspnet.h>
-#include <psputility.h>
-#include <pspnet_inet.h>
-#include <pspnet_apctl.h>
-#include <pspnet_resolver.h>
-#include <psphttp.h>
-#include <pspwlan.h>
-
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <sys/select.h>
-
-
+#include <pspkernel.h>
+#include <pspdebug.h>
+#include <pspdisplay.h>
+#include <pspctrl.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/select.h>
@@ -31,8 +17,6 @@
 #include <sys/socket.h>
 #include <errno.h>
 #include <unistd.h> 
-
-
 #include <iostream>
 #include <string>
 
@@ -41,7 +25,7 @@ public:
     ConnectionManager();
     ~ConnectionManager();
 
-    int GetConnectionState();
+    int GetConnectionState(int state);
     int CreateSocket();
     int GetCurrentSocket();
     int CloseCurrentSocket();
