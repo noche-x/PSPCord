@@ -17,7 +17,6 @@
 #include <sys/socket.h>
 #include <errno.h>
 #include <unistd.h> 
-#include <iostream>
 #include <string>
 
 class ConnectionManager {
@@ -28,10 +27,10 @@ public:
     int GetConnectionState(int state);
     int CreateSocket();
     int GetCurrentSocket();
-    int CloseCurrentSocket();
     int Connect(const char* ipadd);    
     int SendMessage(const char* message);
-    const char* RecvMessage();
+    int RecvMessage(char* recieve);
+    int CloseCurrentSocket();
     const char* GetErrorCode();
 private:
     const char* m_ip;

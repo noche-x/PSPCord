@@ -1,6 +1,5 @@
 TARGET = psp-chat
 OBJS = src/PSP-Chat/main.o \
-src/PSP-Chat/Globals.o \
 src/PSP-Chat/framework/utils/common.o \
 src/PSP-Chat/framework/gfx/RenderUtil.o \
 src/PSP-Chat/framework/gfx/intrafont/glib2d.o \
@@ -20,13 +19,13 @@ ASFLAGS = $(CFLAGS)
 
 BUILD_PRX = 1
 PSP_FW_VERSION=371
-PSP_LARGE_MEMORY = 0 #PHAT SUPPORT! Our app isn't that big! 
+PSP_LARGE_MEMORY = 1 #PHAT SUPPORT! Our app isn't that big! 
 
 LDFLAGS =
 # -losl -lmmio -lpng
 
-# -lz -lpsphprm -lpspsdk -lpspctrl -lpsprtc -lpsppower -lpspgum -lpspgu -lpsphttp -lpspssl -lpspwlan -lpspnet_adhocmatching -lpspnet_adhoc -lpspnet_adhocctl -lm -lpspusb -lpspusbstor -lpspmp3 -lmad -lpspaudiolib -lpspaudio -lpspaudiocodec -lmikmod -lstdc++ -lpspvfpu -lpspvram -lpspreg -lpspumd
-LIBS    = -lpspaudiolib -lpspaudio -lmikmod -lpspaudiocodec -lpng -lz -lpspgum -lpspgu -lstdc++ -lpsprtc -lpspctrl -lm -lpspvfpu -lpspsdk -lpsppower -lpsphttp -ljpeg
+LIBS    = -lpspwlan -lpspnet_adhocmatching -lpspnet_adhoc -lpspnet_adhocctl -lpspusb -lpspusbstor -lpspmp3 -lmad -lpspvram -lpspreg -lpspumd -lpsphprm -lpspaudiolib -lpspaudio -lmikmod -lpspaudiocodec -lpng -lz -lpspgum -lpspgu -lstdc++ -lpsprtc -lpspctrl -lm -lpspvfpu -lpspsdk -lpsppower -lpsphttp -ljpeg -lpspssl
+# LIBS = -lpspaudiolib -lpspaudio -lmikmod -lpspaudiocodec -lpng -lz -lpspgum -lpspgu -lstdc++ -lpsprtc -lpspctrl -lm -lpspvfpu -lpspsdk -lpsppower -lpsphttp
 
 EXTRA_TARGETS = EBOOT.PBP
 PSP_EBOOT_ICON= ICON0.png
