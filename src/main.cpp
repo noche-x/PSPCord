@@ -55,14 +55,14 @@ bool connect()
 	// XD , this is a random xd left by the developers of this test project
 
 	// send it through to socket
-	if (send(sock, buffer, sizeof(buffer), 0)) //Server reads a buffer of 1024
+	if (send(sock, buffer, sizeof(buffer), 0) < 0) //Server reads a buffer of 1024
 	{
 		pspprint("[!] sending error\n");
 		return false;
 	}
 
 	// server sends an message aswell
-	if (recv(sock, recvbuf, sizeof(recvbuf), 0)) {
+	if (recv(sock, recvbuf, sizeof(recvbuf), 0) < 0) {
 		pspprint("[!] recv error\n");
 		return false;
 	}
@@ -154,8 +154,11 @@ int main(void)
 			pspprint("[!] sceNetApctlGetState returns $%x\n", err);
 			break;
 		}
-		if (state == 4)
+		if (state == 4) {
+			pspDebugScreenSetXY(x_pos, y_pos + 1);
+			pspprint("[*] connection state %d of 4      connected!\n\n", state);
 			break; // connected!
+		}
 
 		pspDebugScreenSetXY(x_pos, y_pos);
 		pspprint("[*] connecting to primary internet connection...\n");
