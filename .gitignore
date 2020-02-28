@@ -36,3 +36,9 @@
 .vs/PSP-Chat/v16/.suo
 *.sqlite
 *.json
+
+EBOOT.PBP
+
+psp-chat.elf
+
+psp-chat.prx
