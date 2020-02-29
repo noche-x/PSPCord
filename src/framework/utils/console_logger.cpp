@@ -1,5 +1,5 @@
 #include "console_logger.h"
-//#include <pspdebug.h>
+#include <pspdebug.h>
 #include <stdarg.h>
 
 void console_logger::init()
@@ -7,10 +7,10 @@ void console_logger::init()
     //pspDebugScreenInit();
 }
 
-void console_logger::log(const char* message, ...)
+void console_logger::log(std::string message, ...)
 {
-    // message.insert(0, "[+] ");
-    // message.append("/n");
+    message.insert(0, "[+] ");
+    message.append("/n");
 
     // va_list argList;
     // char cbuffer[512];
