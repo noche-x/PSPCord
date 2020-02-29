@@ -20,7 +20,7 @@ ASFLAGS = $(CFLAGS)
 
 BUILD_PRX = 1
 PSP_FW_VERSION=371
-PSP_LARGE_MEMORY = 0 #PHAT SUPPORT! Our app isn't that big! 
+PSP_LARGE_MEMORY = 1 #PHAT SUPPORT! Our app isn't that big! 
 
 LDFLAGS =
 # -losl -lmmio -lpng
