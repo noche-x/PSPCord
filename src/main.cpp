@@ -10,7 +10,6 @@ PSP_HEAP_SIZE_MAX();
 
 // make it easier to type
 #define pspprint pspDebugScreenPrintf
-console_logger logger;
 
 extern "C"
 {
@@ -37,8 +36,7 @@ extern "C"
 
 bool connect()
 {
-	logger.exec("connecting to LAN server...");
-	//pspprint("[*] connecting to LAN server...\n");
+	pspprint("[*] connecting to LAN server...\n");
 	// create a socket to connect to the server
 	int sock = socket(PF_INET, SOCK_STREAM, 0);
 	
@@ -51,8 +49,7 @@ bool connect()
 
 	// connect to the server via the socket and the address
 	if (connect(sock, (struct sockaddr *)&name, sizeof(name)) < 0) {
-		logger.error("connection error");
-		//pspprint("[!] connection error\n");
+		pspprint("[!] connection error\n");
 		return false;
 	}
 
@@ -61,15 +58,13 @@ bool connect()
 	// send it through to socket
 	if (send(sock, buffer, sizeof(buffer), 0) < 0) //Server reads a buffer of 1024
 	{
-		logger.error("sending error");
-		//pspprint("[!] sending error\n");
+		pspprint("[!] sending error\n");
 		return false;
 	}
 
 	// server sends an message aswell
 	if (recv(sock, recvbuf, sizeof(recvbuf), 0) < 0) {
-		logger.error("recv error");
-		//pspprint("[!] recv error\n");
+		pspprint("[!] recv error\n");
 		return false;
 	}
 
@@ -82,8 +77,7 @@ bool connect()
 int main(void)
 {
 	//Initialize the Screen
-	//pspDebugScreenInit();
-	logger.init();
+	pspDebugScreenInit();
 	setupExitCallback();
 
 	/*
@@ -94,36 +88,26 @@ int main(void)
 /_/    /____/_/          \____/_/ /_/\__,_/\__/  
                                                  
 	*/
-
-	logger.info("    ____  _____ ____        ________          __ ");
-	logger.info("   / __ \/ ___// __ \      / ____/ /_  ____ _/ /_");
-	logger.info("  / /_/ /\__ \/ /_/ /_____/ /   / __ \/ __ `/ __/");
-	logger.info(" / ____/___/ / ____/_____/ /___/ / / / /_/ / /_  ");
-	logger.info("/_/    /____/_/          \____/_/ /_/\__,_/\__/  ");
-	// pspprint("    ____  _____ ____        ________          __ \n");
-	// pspprint("   / __ \/ ___// __ \      / ____/ /_  ____ _/ /_\n");
-	// pspprint("  / /_/ /\__ \/ /_/ /_____/ /   / __ \/ __ `/ __/\n");
-	// pspprint(" / ____/___/ / ____/_____/ /___/ / / / /_/ / /_  \n");
-	// pspprint("/_/    /____/_/          \____/_/ /_/\__,_/\__/  \n");
+	pspprint("    ____  _____ ____        ________          __ \n");
+	pspprint("   / __ \/ ___// __ \      / ____/ /_  ____ _/ /_\n");
+	pspprint("  / /_/ /\__ \/ /_/ /_____/ /   / __ \/ __ `/ __/\n");
+	pspprint(" / ____/___/ / ____/_____/ /___/ / / / /_/ / /_  \n");
+	pspprint("/_/    /____/_/          \____/_/ /_/\__,_/\__/  \n");
 	pspprint("\n");
-	logger.info("temporary console gui :(");
-	//pspprint("[+] temporary console gui :(\n");
+	pspprint("[+] temporary console gui :(\n");
 	pspprint("======================================\n");
 
-	logger.exec("loading kernel modules...");
-	//pspprint("[*] loading kernel modules\n");
-	
+	pspprint("[*] loading kernel modules\n");
+
 	//We need to load some basic kernel modules in order to use networking features
 	sceUtilityLoadNetModule(PSP_NET_MODULE_COMMON);	//All sceNetCommands
 	sceUtilityLoadNetModule(PSP_NET_MODULE_INET); 	//All sceInetCommands (including the socket library)
 	sceUtilityLoadNetModule(PSP_NET_MODULE_SSL); 	//Unused, but you can use SSL functions if you need.
 	//Result stores our codes from the initialization process
 	int result = 0;
-	logger.log("done\n");
-	//pspprint("[+] done\n\n");
+	pspprint("[+] done\n\n");
 
-	logger.exec("initalizing inet and apctl");
-	//pspprint("[*] initalizing inet and apctl\n");
+	pspprint("[*] initalizing inet and apctl\n");
 	result = sceNetInit(128 * 1024, 42, 0, 42, 0); //Creates the network manager with a buffer
 	if (result < 0)
 	{ //These If Blocks close the game on an error
@@ -150,8 +134,7 @@ int main(void)
 
 	result = sceNetApctlConnect(1); //Connects to your first (primary) internet connection.
 
-	logger.log("done\n");
-	//pspprint("[+] done\n\n");
+	pspprint("[+] done\n\n");
 
 	SceCtrlData buttonInput;
 
