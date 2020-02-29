@@ -1,6 +1,7 @@
 TARGET = psp-chat
 OBJS = src/main.o \
 src/framework/utils/common.o \
+src/framework/utils/console_logger.o \
 # src/PSP-Chat/framework/gfx/RenderUtil.o \
 # src/PSP-Chat/framework/gfx/intrafont/glib2d.o \
 # src/PSP-Chat/framework/utils/Input.o \
