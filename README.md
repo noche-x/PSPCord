@@ -2,6 +2,7 @@
  This project is possible thanks to [@NT-Bourgeois-Iridescence-Technologies](https://github.com/NT-Bourgeois-Iridescence-Technologies). He taught me the pretty much everything about PSP programming. You should check his [youtube channel](https://www.youtube.com/channel/UCSTmaB4YZmnyUSAoerATnsg) out.
 
 ## Recent Updates & News
+- [Stardust Engine](https://youtu.be/bGMZ6UWHOd4). Me and Iridescence decided to work together to combine our ultimate powers.
 - [Proof of Concept](https://www.youtube.com/watch?v=7BbF_-FT33I). I've made a simple POC to show the potential of this project. 
 
 ## Info
