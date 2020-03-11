@@ -13,10 +13,10 @@ Until the project is fully functional, we will not provide a release.
 #### Prerequisites 
 In order to build the project you need the [**top-sekret/psptoolchain**](https://github.com/top-sekret/psptoolchain).
 
+#### Building Instructions
 After you clone it you can follow the steps provided on that repo.
 
 1. Run **./build.sh** and it will compile the psp client.
-~~2. Drag and drop the **PSP-Chat** folder in *PSP-Chat/output/PSP-Chat* to *PSP DRIVE*/PSP/GAME~~
 2. Copy **EBOOT.PBP, PARAM.SFO, psp-chat.elf, psp-chat.prx** to /PSP/GAME/PSP-Chat/
 
 And you should be able to see it in your PSP and launch it.

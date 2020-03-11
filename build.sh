@@ -1,2 +1,2 @@
-source path.sh
+export PATH=$PATH:/usr/local/pspdev/bin
 make

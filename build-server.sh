@@ -1,0 +1,1 @@
+g++ -g -O3 -I/data[...]/ src/Test-Server/main.cpp -o server.out
