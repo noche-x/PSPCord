@@ -1,11 +1,7 @@
 [CORE][INFO]: Stardust-Engine Initialized!
 [CORE][INFO]: Platform Initialized!
 [CORE][INFO]: Attempting Network Init
-[CORE][INFO]: Failed to autoconnect!
-[CORE][INFO]: Opening Connection [192.168.2.190]@35700!
-[CORE][WARN]: Failed to open a connection! (Is the server open?)
+[CORE][INFO]: Opening Connection [192.168.43.155]@35700!
 [CORE][INFO]: Starting A Stardust Helper Thread!
 [CORE][INFO]: Sending Network Packet Queue
-[CORE][WARN]: Failed to send a packet!
-[CORE][WARN]: Packet Size: 15
 [CORE][INFO]: Added Packet Handler for ID: 301

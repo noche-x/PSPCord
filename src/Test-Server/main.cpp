@@ -324,7 +324,14 @@ int main(int argc, char *argv[])
 
     pIn.pos = 0;
 
+
+
     pIn.ID = decodeShort(pIn);
+
+    std::cout << "POS: " << pIn.pos << std::endl;
+
+    
+    
 
     //Utilities::detail::core_Logger->log("Received Packet!", Utilities::LOGGER_LEVEL_DEBUG);
     //Utilities::detail::core_Logger->log("Packet ID: " + std::to_string(pIn.ID), Utilities::LOGGER_LEVEL_DEBUG);
@@ -339,23 +346,27 @@ int main(int argc, char *argv[])
 
     std::vector<byte> endByteBuffer;
 
-    int packetLength = new_packet->bytes.size() + 2;
+    int packetLength = new_packet->bytes.size();
 
     //Header
     encodeVarInt(packetLength, endByteBuffer);
     encodeShort(new_packet->ID, endByteBuffer);
 
     //Add body
-    for (int x = 0; x < new_packet->bytes.size(); x++)
+    for (int x = 2; x < new_packet->bytes.size(); x++)
     {
         endByteBuffer.push_back(new_packet->bytes[x]);
     }
+    printf("\n");
+
+
     printf("hashedChars: ");
     for (int i = 0; i < endByteBuffer.size(); i++)
     {
-        printf("%x ", endByteBuffer.at(i));
+        printf("%x ", endByteBuffer[i]);
     }
     printf("\n");
+
     //Send over socket
     if (send(client_sock, endByteBuffer.data(), endByteBuffer.size() + 1, 0) > 0)
         std::cout << "yes" << std::endl;
