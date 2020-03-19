@@ -1,5 +1,4 @@
 #pragma once
-#include <Utilities/Logger.h>
 #include <Network/NetworkTypes.h>
 #include <string>
 
@@ -92,14 +91,12 @@ namespace Stardust::Network {
 	inline std::string decodeString(PacketIn& p) {
 		std::string res = "";
 
-		Utilities::detail::core_Logger->log("Pos: " + std::to_string(p.pos));
 		int size = decodeVarInt(p);
-		
+
 		for (int i = 0; i < size; i++) {
 			char a = (char)p.bytes[p.pos++];
 			res.append(&a);
 		}
-        Utilities::detail::core_Logger->log("Size: " + std::to_string(size));
 
 		return res;
 	}

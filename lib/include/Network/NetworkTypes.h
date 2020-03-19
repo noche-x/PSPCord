@@ -56,10 +56,10 @@ namespace Stardust::Network {
 		int ret = 0;
 
 		for (int i = p.pos; i < p.bytes.size(); i++) {
-			ret |= (p.bytes[i] & 127) << (7 * i);
 			p.pos++;
+			ret |= (p.bytes[i] & 127) << (7 * i);
 
-			if (!(p.bytes[i] & 128)) {
+			if (!p.bytes[i] & 128) {
 				break;
 			}
 		}
