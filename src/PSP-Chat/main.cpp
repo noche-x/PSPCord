@@ -272,17 +272,8 @@ Network::PacketOut *loginPacket(std::string username, std::string password)
 
 int handler(Network::PacketIn *packet)
 {
-
-    printf("hashedChars: ");
-    for (int i = 0; i < packet->bytes.size(); i++)
-    {
-        printf("%x ", packet->bytes[i]);
-    }
-    printf("\n");
-
-
-    auto username = Network::decodeString(*packet);
-    auto password = Network::decodeString(*packet);
+    std::string username = Network::decodeString(*packet);
+    std::string password = Network::decodeString(*packet);
     Utilities::app_Logger->log(username);
     Utilities::app_Logger->log(password);
 
@@ -293,8 +284,10 @@ int main()
 {
     // stardust init
     Platform::initPlatform("psp-chat");
-    Utilities::app_Logger->currentLevel = Utilities::LOGGER_LEVEL_TRACE;
-    Utilities::detail::core_Logger->currentLevel = Utilities::LOGGER_LEVEL_TRACE;
+    
+    //Enable low-level logger
+    //Utilities::app_Logger->currentLevel = Utilities::LOGGER_LEVEL_TRACE;
+    //Utilities::detail::core_Logger->currentLevel = Utilities::LOGGER_LEVEL_TRACE;
 
     // test log
     Utilities::app_Logger->log("Hello World!");
