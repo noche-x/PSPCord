@@ -5,3 +5,6 @@
 [CORE][INFO]: Starting A Stardust Helper Thread!
 [CORE][INFO]: Sending Network Packet Queue
 [CORE][INFO]: Added Packet Handler for ID: 301
+[CORE][INFO]: Clearing Packet Handlers
+[CORE][INFO]: Killing A Stardust Helper Thread!
+[CORE][INFO]: Cleaning up Networking Driver

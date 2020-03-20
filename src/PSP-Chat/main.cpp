@@ -308,9 +308,13 @@ int main()
     Network::g_NetworkDriver.SendPackets();
 
     Network::g_NetworkDriver.AddPacketHandler(PacketIDS::LOGIN_PACKET, handler);
+    
     Network::g_NetworkDriver.ReceivePacket();
     Network::g_NetworkDriver.HandlePackets();
-    
+
+    Network::g_NetworkDriver.ClearPacketHandlers();
+    Network::g_NetworkDriver.ClearPacketQueue();
+    Network::g_NetworkDriver.Cleanup();
     Platform::exitPlatform();
     return 0;
 }
