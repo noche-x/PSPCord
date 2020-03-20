@@ -3,5 +3,11 @@
 [CORE][INFO]: Attempting Network Init
 [CORE][INFO]: Opening Connection [192.168.43.155]@35700!
 [CORE][INFO]: Starting A Stardust Helper Thread!
+[CORE][DEBUG]: Clearing Packet Queue
 [CORE][INFO]: Sending Network Packet Queue
+[CORE][DEBUG]: Sending packet with ID: 301
 [CORE][INFO]: Added Packet Handler for ID: 301
+[CORE][DEBUG]: LENGTH: 14
+[CORE][DEBUG]: Received Packet!
+[CORE][DEBUG]: Packet ID: 301
+[CORE][TRACE]: Handling Packets...

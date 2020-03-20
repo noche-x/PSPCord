@@ -371,15 +371,6 @@ int main(int argc, char *argv[])
     if (send(client_sock, endByteBuffer.data(), endByteBuffer.size() + 1, 0) > 0)
         std::cout << "yes" << std::endl;
 
-    // std::cout << recv_a << std::endl;
-
-    // for (int i = 0; i < 2000; i++)
-    //     std::cout << client_message[i];
-
-    // std::cout << std::endl;
-
-    //puts(client_message);
-
     close(client_sock);
 
     puts("Disconnecting and closing");

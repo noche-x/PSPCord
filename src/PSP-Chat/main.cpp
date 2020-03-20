@@ -267,46 +267,38 @@ Network::PacketOut *loginPacket(std::string username, std::string password)
     p->ID = PacketIDS::LOGIN_PACKET;
     Network::encodeString(username, *p);
     Network::encodeString(password, *p);
-    std::string str(p->bytes.begin(), p->bytes.end());
-    Utilities::app_Logger->log(str.c_str());
-    return p;
-}
-
-Network::PacketOut *sendMessage(std::string username, std::string password)
-{
-    Network::PacketOut *p = new Network::PacketOut();
-    p->ID = PacketIDS::LOGIN_PACKET;
-    Network::encodeString(username, *p);
-    Network::encodeString(password, *p);
-    std::string str(p->bytes.begin(), p->bytes.end());
-    Utilities::app_Logger->log(str.c_str());
     return p;
 }
 
 int handler(Network::PacketIn *packet)
 {
-    Utilities::app_Logger->log("recieved!");
-    Utilities::app_Logger->log(std::to_string(packet->ID));
+
     printf("hashedChars: ");
     for (int i = 0; i < packet->bytes.size(); i++)
     {
-        printf("%x", packet->bytes[i]);
+        printf("%x ", packet->bytes[i]);
     }
     printf("\n");
+
 
     auto username = Network::decodeString(*packet);
     auto password = Network::decodeString(*packet);
     Utilities::app_Logger->log(username);
     Utilities::app_Logger->log(password);
+
+    return 0;
 }
 
 int main()
 {
     // stardust init
     Platform::initPlatform("psp-chat");
+    Utilities::app_Logger->currentLevel = Utilities::LOGGER_LEVEL_TRACE;
+    Utilities::detail::core_Logger->currentLevel = Utilities::LOGGER_LEVEL_TRACE;
 
     // test log
     Utilities::app_Logger->log("Hello World!");
+
     // get the keys that are pressed
     Utilities::updateInputs();
 
@@ -325,15 +317,7 @@ int main()
     Network::g_NetworkDriver.AddPacketHandler(PacketIDS::LOGIN_PACKET, handler);
     Network::g_NetworkDriver.ReceivePacket();
     Network::g_NetworkDriver.HandlePackets();
-    //Network::PacketOut recvPacket = Network::g_NetworkDriver.packetQueue().back();
-    //Utilities::g_Logger->log(recvPacket.ID);
-    //Utilities::g_Logger->log(recvPacket.bytes);
-
-    // while (!Utilities::KeyPressed(PSP_CTRL_START)) {
-    //     Utilities::updateInputs();
-    // }
-
+    
     Platform::exitPlatform();
-
     return 0;
 }
