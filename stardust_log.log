@@ -1,21 +1,10 @@
 [CORE][INFO]: Stardust-Engine Initialized!
 [CORE][INFO]: Platform Initialized!
 [CORE][INFO]: Attempting Network Init
-<<<<<<< Updated upstream
-[CORE][INFO]: Opening Connection [192.168.43.155]@35700!
+[CORE][INFO]: Opening Connection [192.168.2.190]@35700!
 [CORE][INFO]: Starting A Stardust Helper Thread!
 [CORE][INFO]: Sending Network Packet Queue
 [CORE][INFO]: Added Packet Handler for ID: 301
 [CORE][INFO]: Clearing Packet Handlers
 [CORE][INFO]: Killing A Stardust Helper Thread!
 [CORE][INFO]: Cleaning up Networking Driver
-=======
-[CORE][INFO]: Opening Connection [192.168.2.190]@35700!
-[CORE][INFO]: Starting A Stardust Helper Thread!
-[CORE][INFO]: Sending Network Packet Queue
-[CORE][INFO]: Added Packet Handler for ID: 301
-[CORE][INFO]: Pos: 2
-[CORE][INFO]: Size: 835584
-[CORE][INFO]: Pos: -16381
-[CORE][INFO]: Size: 0
->>>>>>> Stashed changes

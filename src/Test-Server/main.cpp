@@ -329,8 +329,11 @@ int main(int argc, char *argv[])
     pIn.ID = decodeShort(pIn);
 
     std::cout << "POS: " << pIn.pos << std::endl;
-
+    auto usr = decodeString(pIn);
+    auto psw = decodeString(pIn);
     
+    std::cout << "usr: " << usr << std::endl;
+    std::cout << "psw: " << psw << std::endl;
     
 
     //Utilities::detail::core_Logger->log("Received Packet!", Utilities::LOGGER_LEVEL_DEBUG);

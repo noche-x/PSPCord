@@ -298,7 +298,7 @@ int main()
     // network init
     Network::g_NetworkDriver.Init();
     // connect to lan server
-    Network::g_NetworkDriver.Connect(35700, "192.168.43.155");
+    Network::g_NetworkDriver.Connect(35700, "192.168.2.190");
     // login packet creation
     auto packet = loginPacket("noche", "123");
 
