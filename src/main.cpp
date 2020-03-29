@@ -59,7 +59,7 @@ bool connect()
 	// XD , this is a random xd left by the developers of this test project
 
 	// send it through to socket
-	if (send(sock, buffer, sizeof(buffer), 0) < 0) //Server reads a buffer of 1024
+	if (send(sock, buffer, sizeof(buffer), 0)) //Server reads a buffer of 1024
 	{
 		logger.error("sending error");
 		//pspprint("[!] sending error\n");
@@ -67,9 +67,14 @@ bool connect()
 	}
 
 	// server sends an message aswell
+<<<<<<< e53e56229119d3c880ee1a2c6da03c759a97eb20
+	if (recv(sock, recvbuf, sizeof(recvbuf), 0)) {
+		pspprint("[!] recv error\n");
+=======
 	if (recv(sock, recvbuf, sizeof(recvbuf), 0) < 0) {
 		logger.error("recv error");
 		//pspprint("[!] recv error\n");
+>>>>>>> Development branch for 08/060
 		return false;
 	}
 
@@ -172,11 +177,8 @@ int main(void)
 			pspprint("[!] sceNetApctlGetState returns $%x\n", err);
 			break;
 		}
-		if (state == 4) {
-			pspDebugScreenSetXY(x_pos, y_pos + 1);
-			pspprint("[*] connection state %d of 4      connected!\n\n", state);
+		if (state == 4)
 			break; // connected!
-		}
 
 		pspDebugScreenSetXY(x_pos, y_pos);
 		pspprint("[*] connecting to primary internet connection...\n");

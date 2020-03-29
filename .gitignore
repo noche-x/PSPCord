@@ -23,7 +23,6 @@
 # Compiled Static libraries
 *.lai
 *.la
-*.a
 *.lib
 
 # Executables
@@ -42,3 +41,7 @@ EBOOT.PBP
 psp-chat.elf
 
 psp-chat.prx
+
+*.log
+
+*.zip
