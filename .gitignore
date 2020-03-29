@@ -41,3 +41,7 @@ EBOOT.PBP
 psp-chat.elf
 
 psp-chat.prx
+
+*.log
+
+*.zip

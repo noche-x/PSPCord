@@ -248,6 +248,8 @@ PSP_HEAP_SIZE_KB(-1024);
 #include <Utilities/Timer.h>
 #include <Utilities/Logger.h>
 #include <Utilities/Input.h>
+#include <Graphics/Dialogs.h>
+#include <Graphics/RendererCore.h>
 #include <Network/NetworkDriver.h>
 
 using namespace Stardust;
@@ -257,16 +259,15 @@ using namespace Stardust;
 enum PacketIDS
 {
     NONE = 0,
-    LOGIN_PACKET = 301,
     SEND_MESSAGE_PACKET = 302,
 };
 
-Network::PacketOut *loginPacket(std::string username, std::string password)
+Network::PacketOut *sendMessagePacket(std::string username, std::string message)
 {
     Network::PacketOut *p = new Network::PacketOut();
-    p->ID = PacketIDS::LOGIN_PACKET;
+    p->ID = PacketIDS::SEND_MESSAGE_PACKET;
     Network::encodeString(username, *p);
-    Network::encodeString(password, *p);
+    Network::encodeString(message, *p);
     return p;
 }
 
@@ -284,10 +285,27 @@ int main()
 {
     // stardust init
     Platform::initPlatform("psp-chat");
-    
+
     //Enable low-level logger
     //Utilities::app_Logger->currentLevel = Utilities::LOGGER_LEVEL_TRACE;
     //Utilities::detail::core_Logger->currentLevel = Utilities::LOGGER_LEVEL_TRACE;
+
+    FILE *pFile;
+    char buffer[100];
+
+    pFile = fopen("ip.txt", "r");
+    if (pFile == NULL)
+        Utilities::app_Logger->log("Error opening file");
+    else
+    {
+        while (!feof(pFile))
+        {
+            if (fgets(buffer, 100, pFile) == NULL)
+                break;
+            fputs(buffer, stdout);
+        }
+        fclose(pFile);
+    }
 
     // test log
     Utilities::app_Logger->log("Hello World!");
@@ -296,25 +314,120 @@ int main()
     Utilities::updateInputs();
 
     // network init
-    Network::g_NetworkDriver.Init();
-    // connect to lan server
-    Network::g_NetworkDriver.Connect(35700, "192.168.2.190");
-    // login packet creation
-    auto packet = loginPacket("noche", "123");
+    if (!Network::g_NetworkDriver.Init())
+        Graphics::ShowMessageError("failed to initalize the network driver", 1);
 
-    // add packet to the list
-    Network::g_NetworkDriver.AddPacket(packet);
-    // send the packet queue
-    Network::g_NetworkDriver.SendPackets();
+    std::string username = "";
+    unsigned short outtext[128];
+    unsigned short *desc = (unsigned short *)strtol("username", NULL, 0);
+    while (true)
+    {
+        Graphics::g_RenderCore.BeginCommands(true);
+        Graphics::g_RenderCore.SetClearColor(200, 200, 200, 255);
+        Graphics::g_RenderCore.Clear();
 
-    Network::g_NetworkDriver.AddPacketHandler(PacketIDS::LOGIN_PACKET, handler);
-    
-    Network::g_NetworkDriver.ReceivePacket();
-    Network::g_NetworkDriver.HandlePackets();
+        if (Graphics::ShowOSK(desc, outtext, 128) != -1)
+        {
+            for (int j = 0; outtext[j]; j++)
+            {
+                unsigned c = outtext[j];
+
+                if (32 <= c && c <= 127) // print ascii only
+                    username += c;
+            }
+            break;
+        }
+        else
+        {
+            if (Graphics::ShowMessageYesNo("are you sure you want to exit") == 1)
+                sceKernelExitGame();
+        }
+
+        Graphics::g_RenderCore.EndCommands(false);
+    }
+
+    std::string message = "do you want " + username + " as your username?";
+    while (true)
+    {
+        Graphics::g_RenderCore.BeginCommands(true);
+        Graphics::g_RenderCore.SetClearColor(104, 79, 137, 255);
+        Graphics::g_RenderCore.Clear();
+        auto val = Graphics::ShowMessageYesNo(message.c_str());
+        if (val == -1)
+        {
+            if (Graphics::ShowOSK(desc, outtext, 128) != -1)
+            {
+                for (int j = 0; outtext[j]; j++)
+                {
+                    unsigned c = outtext[j];
+
+                    if (32 <= c && c <= 127) // print ascii only
+                        username += c;
+                }
+                message = "do you want " + username + " as your username?";
+            }
+            else
+            {
+                if (Graphics::ShowMessageYesNo("are you sure you want to exit") == 1)
+                    sceKernelExitGame();
+            }
+        }
+        else if (val == 1)
+            break;
+
+        Graphics::g_RenderCore.EndCommands(false);
+    }
+
+    while (1)
+    {
+        // connect to lan server
+        Network::g_NetworkDriver.Connect(35700, buffer);
+        // login packet creation
+
+        std::string field = "";
+        unsigned short outtext[128];
+        unsigned short *desc = (unsigned short *)strtoul("message", NULL, 0);
+        while (true)
+        {
+            Graphics::g_RenderCore.BeginCommands(true);
+            Graphics::g_RenderCore.SetClearColor(100, 100, 100, 255);
+            Graphics::g_RenderCore.Clear();
+            if (Graphics::ShowOSK(desc, outtext, 128) != -1)
+            {
+                for (int j = 0; outtext[j]; j++)
+                {
+                    unsigned c = outtext[j];
+
+                    if (32 <= c && c <= 127) // print ascii only
+                        field += c;
+                }
+                break;
+            }
+            else
+            {
+                if (Graphics::ShowMessageYesNo("are you sure you want to exit") == 1)
+                    sceKernelExitGame();
+            }
+            Graphics::g_RenderCore.EndCommands(false);
+        }
+
+        auto packet = sendMessagePacket(username, std::string(field));
+
+        // add packet to the list
+        Network::g_NetworkDriver.AddPacket(packet);
+        // send the packet queue
+        Network::g_NetworkDriver.SendPackets();
+
+        //Network::g_NetworkDriver.AddPacketHandler(PacketIDS::LOGIN_PACKET, handler);
+
+        //Network::g_NetworkDriver.ReceivePacket();
+        //Network::g_NetworkDriver.HandlePackets();
+    }
 
     Network::g_NetworkDriver.ClearPacketHandlers();
     Network::g_NetworkDriver.ClearPacketQueue();
     Network::g_NetworkDriver.Cleanup();
+
     Platform::exitPlatform();
     return 0;
 }
