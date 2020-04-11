@@ -245,6 +245,7 @@ PSP_MODULE_INFO("PSP-Chat", 0, 0, 1);
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_VFPU | THREAD_ATTR_USER);
 PSP_HEAP_SIZE_KB(-1024);
 
+#define MC_PSP
 #include <Utilities/Timer.h>
 #include <Utilities/Logger.h>
 #include <Utilities/Input.h>
@@ -260,6 +261,7 @@ enum PacketIDS
 {
     NONE = 0,
     SEND_MESSAGE_PACKET = 302,
+    RECV_MESSAGE_PACKET = 303,
 };
 
 Network::PacketOut *sendMessagePacket(std::string username, std::string message)
@@ -274,9 +276,9 @@ Network::PacketOut *sendMessagePacket(std::string username, std::string message)
 int handler(Network::PacketIn *packet)
 {
     std::string username = Network::decodeString(*packet);
-    std::string password = Network::decodeString(*packet);
+    std::string message = Network::decodeString(*packet);
     Utilities::app_Logger->log(username);
-    Utilities::app_Logger->log(password);
+    Utilities::app_Logger->log(message);
 
     return 0;
 }
@@ -285,6 +287,7 @@ int main()
 {
     // stardust init
     Platform::initPlatform("psp-chat");
+    Graphics::g_RenderCore.SetFontStyle(16.f, 0xFFFFFFFF, 0x000000FF, 0, 0);
 
     //Enable low-level logger
     //Utilities::app_Logger->currentLevel = Utilities::LOGGER_LEVEL_TRACE;
@@ -319,13 +322,23 @@ int main()
 
     std::string username = "";
     unsigned short outtext[128];
-    unsigned short *desc = (unsigned short *)strtol("username", NULL, 0);
+    //unsigned short *desc = (unsigned short *)strtol("username", NULL, 0);
+    unsigned short desc[] = {
+        'u',
+        's',
+        'e',
+        'r',
+        'n',
+        'a',
+        'm',
+        'e',
+    };
     while (true)
     {
         Graphics::g_RenderCore.BeginCommands(true);
-        Graphics::g_RenderCore.SetClearColor(200, 200, 200, 255);
+        Graphics::g_RenderCore.SetClearColor(104, 79, 137, 255);
         Graphics::g_RenderCore.Clear();
-
+        Graphics::g_RenderCore;
         if (Graphics::ShowOSK(desc, outtext, 128) != -1)
         {
             for (int j = 0; outtext[j]; j++)
@@ -343,18 +356,22 @@ int main()
                 sceKernelExitGame();
         }
 
-        Graphics::g_RenderCore.EndCommands(false);
+        Graphics::g_RenderCore.EndCommands(true);
     }
 
     std::string message = "do you want " + username + " as your username?";
     while (true)
     {
+        Graphics::g_RenderCore.DebugPrint(10, 10, "bitch ass text");
         Graphics::g_RenderCore.BeginCommands(true);
-        Graphics::g_RenderCore.SetClearColor(104, 79, 137, 255);
+        //bgra
+        //rgba
+        Graphics::g_RenderCore.SetClearColor(137, 79, 104, 255);
         Graphics::g_RenderCore.Clear();
         auto val = Graphics::ShowMessageYesNo(message.c_str());
         if (val == -1)
         {
+            username = "";
             if (Graphics::ShowOSK(desc, outtext, 128) != -1)
             {
                 for (int j = 0; outtext[j]; j++)
@@ -375,7 +392,7 @@ int main()
         else if (val == 1)
             break;
 
-        Graphics::g_RenderCore.EndCommands(false);
+        Graphics::g_RenderCore.EndCommands(true);
     }
 
     while (1)
@@ -386,11 +403,20 @@ int main()
 
         std::string field = "";
         unsigned short outtext[128];
-        unsigned short *desc = (unsigned short *)strtoul("message", NULL, 0);
+        //unsigned short *desc = (unsigned short *)strtoul("message", NULL, 0);
+            unsigned short desc[] = {
+        'm',
+        'e',
+        's',
+        's',
+        'a',
+        'g',
+        'e',
+    };
         while (true)
         {
             Graphics::g_RenderCore.BeginCommands(true);
-            Graphics::g_RenderCore.SetClearColor(100, 100, 100, 255);
+            Graphics::g_RenderCore.SetClearColor(89, 67, 77, 255);
             Graphics::g_RenderCore.Clear();
             if (Graphics::ShowOSK(desc, outtext, 128) != -1)
             {
@@ -408,7 +434,7 @@ int main()
                 if (Graphics::ShowMessageYesNo("are you sure you want to exit") == 1)
                     sceKernelExitGame();
             }
-            Graphics::g_RenderCore.EndCommands(false);
+            Graphics::g_RenderCore.EndCommands(true);
         }
 
         auto packet = sendMessagePacket(username, std::string(field));
@@ -416,12 +442,12 @@ int main()
         // add packet to the list
         Network::g_NetworkDriver.AddPacket(packet);
         // send the packet queue
-        Network::g_NetworkDriver.SendPackets();
+        // Network::g_NetworkDriver.SendPackets();
 
-        //Network::g_NetworkDriver.AddPacketHandler(PacketIDS::LOGIN_PACKET, handler);
+        // Network::g_NetworkDriver.AddPacketHandler(PacketIDS::RECV_MESSAGE_PACKET, handler);
 
-        //Network::g_NetworkDriver.ReceivePacket();
-        //Network::g_NetworkDriver.HandlePackets();
+        // Network::g_NetworkDriver.ReceivePacket();
+        // Network::g_NetworkDriver.HandlePackets();
     }
 
     Network::g_NetworkDriver.ClearPacketHandlers();

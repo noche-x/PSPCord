@@ -17,7 +17,8 @@
 #include <psptypes.h>
 #include <pspge.h>
 #include <psputils.h>
-
+#include <stdarg.h>
+#include <intraFont.h>
 #endif
 
 #include <Graphics/RenderTypes.h>
@@ -35,8 +36,8 @@ namespace Stardust::Graphics {
         void Clear();
 
 #if CURRENT_PLATFORM == PLATFORM_PSP
-        inline void SetClearColor(float r, float g, float b, float a) {
-            clearColor = GU_COLOR(r, g, b, a);
+        inline void SetClearColor(int r, int g, int b, int a) {
+            clearColor = GU_RGBA(r, g, b, a);
             sceGuClearColor(clearColor);
         }
 #endif
@@ -47,6 +48,23 @@ namespace Stardust::Graphics {
         void RenderToTexture(Texture* tex);
 
         void Blit(int sx, int sy, int sw, int sh, int dx, int dy, int slice);
+
+#ifdef MC_PSP
+        intraFont* debugFont;
+        intraFont* numFont;
+        intraFont* engFont;
+        intraFont* rusFont;
+        intraFont* jpn0;
+        intraFont* kr0;
+        intraFont* arib;
+        intraFont* chn;
+        intraFont* defFont;
+        float fontVerticalShift;
+        void InitDebugFont();
+
+        void SetFontStyle(float size, unsigned int color, unsigned int shadowColor, unsigned int options, float angle);
+        void DebugPrint(int x, int y, const char* message, ...);
+#endif
 
     private:
         unsigned int clearColor;

@@ -44,11 +44,21 @@
 enum PacketIDS
 {
     NONE = 0,
-    LOGIN_PACKET = 301,
     SEND_MESSAGE_PACKET = 302,
+    RECV_MESSAGE_PACKET = 303,
 };
 
-aegis::core bot(aegis::create_bot_t().log_level(spdlog::level::trace).token("NjI2MDgyMDczOTgzMzIwMDY0.Xn0Y7Q.bwfKkmJ0Rop_8Daac4ZqSq3uVbY"));
+struct discord_message {
+    std::string username;
+    std::string message;
+    std::vector<std::string> recv_users;
+};
+
+std::vector<discord_message> discord_messages;
+
+//.token("NjI2MDgyMDczOTgzMzIwMDY0.XoC8vw.Y9-lu67VkrCDQb2qbBiWo_jS0kk")
+aegis::core bot(spdlog::level::trace);
+long long int bot_channel = 0;
 
 void *handle_connection(void *p_client_socket)
 {
@@ -100,15 +110,39 @@ void *handle_connection(void *p_client_socket)
     LOG(fmt::format("username: {}", usr));
     LOG(fmt::format("message: {}", msg));
 
-    bot.create_message(647466644385300500, fmt::format("<{}> {}", usr, msg));
+    //usr.replace(usr.begin(), usr.end(), ":", "");
+    std::string illegal_chars = ":*_~`>";
+    std::size_t found = usr.find_first_of(illegal_chars);
+    if (found != std::string::npos)
+        LOG("illegal chars found in username");
+    while (found != std::string::npos)
+    {
+        //usr.replace(found - 1, found, "");
+        //usr[found] = '';
+        usr.erase(found, 1);
+        found = usr.find_first_of(illegal_chars, found);
+    }
+    found = msg.find_first_of(illegal_chars);
+    if (found != std::string::npos)
+        LOG("illegal chars found in message");
+    while (found != std::string::npos)
+    {
+        //msg.replace(found, found + 1, "");
+        //msg[found] = '';
+        msg.erase(found, 1);
+        found = msg.find_first_of(illegal_chars, found);
+    }
+    //msg.replace(msg.begin(), msg.end(), "\\", "\\\\");
+
+    bot.create_message(bot_channel, fmt::format("<{}> {}", usr, msg));
 
     // std::cout << std::to_string(pIn.ID) << std::endl;
     // std::cout << std::string(pIn.bytes.begin(), pIn.bytes.end()) << std::endl;
     std::cout << std::endl;
 
     PacketOut *new_packet = new PacketOut;
-    new_packet->ID = pIn.ID;
-    new_packet->bytes = pIn.bytes;
+    new_packet->ID = PacketIDS::RECV_MESSAGE_PACKET;//pIn.ID;
+    //new_packet->bytes = pIn.bytes;
 
     std::vector<byte> endByteBuffer;
 
@@ -135,17 +169,103 @@ void *handle_connection(void *p_client_socket)
 
     //Send over socket
     //if (send(client_sock, endByteBuffer.data(), endByteBuffer.size() + 1, 0) > 0)
-    //    std::cout << "yes" << std::endl;
-    //IF(send(client_sock, endByteBuffer.data(), endByteBuffer.size() + 1, 0) > 0, "sent the package", "send failed", 1);
+    //  std::cout << "yes" << std::endl;
+    //IF(send(client_sock, endByteBuffer.data(), endByteBuffer.size() + 1, 0) == -1, "sent the package", "send failed", NULL);
 
     close(client_sock);
     return NULL;
+}
+
+struct messages {
+    std::string username;
+    std::string message;
+};
+
+std::vector<messages> messages_vector;
+std::vector<int> connections;
+
+void *send_messages(void*)
+{
+    LOG(fmt::format("size {}", messages_vector.size()));
+    LOG(fmt::format("empty {}", messages_vector.empty()));
+    bool statement = !messages_vector.empty();
+    if (statement)
+    {
+        //LOG(fmt::format("content {}", messages_vector.data()));
+        Stardust::Network::PacketOut *new_packet = new Stardust::Network::PacketOut;
+        Stardust::Network::PacketOut *temp_packet = new Stardust::Network::PacketOut;
+        new_packet->ID = PacketIDS::RECV_MESSAGE_PACKET;
+        //new_packet->bytes = pIn.bytes;
+        int amount_of_messages = 0;
+        
+        for (auto &&c : messages_vector)
+        {
+            Stardust::Network::encodeString(c.username, *temp_packet);
+            Stardust::Network::encodeString(c.message, *temp_packet);
+            amount_of_messages++;
+        }
+        Stardust::Network::encodeInt(amount_of_messages, *new_packet);
+        for (int i = 0; i < temp_packet->bytes.size(); i++)
+        {
+            new_packet->bytes.push_back(temp_packet->bytes[i]);
+        }
+        delete temp_packet;        
+
+        std::vector<Stardust::Network::byte> endByteBuffer;
+
+        int packetLength = new_packet->bytes.size();
+
+        //Header
+        Stardust::Network::encodeVarInt(packetLength, endByteBuffer);
+        Stardust::Network::encodeShort(new_packet->ID, endByteBuffer);
+
+        //Add body
+        for (int x = 2; x < new_packet->bytes.size(); x++)
+        {
+            endByteBuffer.push_back(new_packet->bytes[x]);
+        }
+
+        printf("[+] hashedChars: ");
+        for (int i = 0; i < endByteBuffer.size(); i++)
+        {
+            printf("%x ", endByteBuffer[i]);
+        }
+        std::cout << std::endl;
+        for (auto c : connections)
+        {
+            //Send over socket
+            //if (send(client_sock, endByteBuffer.data(), endByteBuffer.size() + 1, 0) > 0)
+            //  std::cout << "yes" << std::endl;
+            //IF(send(client_sock, endByteBuffer.data(), endByteBuffer.size() + 1, 0) == -1, "sent the package", "send failed", NULL);
+            IF(send(c, endByteBuffer.data(), endByteBuffer.size() + 1, 0) == -1, "sent the package", "send failed", NULL);
+        }
+        messages_vector.clear();
+    }
 }
 
 int main(int argc, char *argv[])
 {
     argh::parser cmdl(argv);
     using jsonf = nlohmann::json;
+
+    bool use_command_line = false;
+
+    messages_vector.clear();
+    connections.clear();
+
+    // std::ifstream arg_val;
+    // if (!(cmdl("-om") >> arg_val)) {
+    //     LOG("invalid open message");
+    //     return 1;
+    // }
+    // else {
+    //     open_message = arg_val;
+    //     use_command_line = true;
+    // }
+    // if (!(cmdl("-bc") >> arg_val) {
+    //     open_message = cmdl("-bc").str();
+    //     use_command_line = true;
+    // }
 
     if (cmdl[{"-a", "--add-user"}])
     {
@@ -184,184 +304,59 @@ int main(int argc, char *argv[])
         using field = aegis::gateway::objects::field;
         if (obj.get_user().is_bot())
             return;
-        if (obj.msg.get_content() == "%embed_test")
-            obj.msg.get_channel().create_message(
-                aegis::create_message_t()
-                    .content(fmt::format("test3 {}", obj.msg.author.username))
-                    .embed(
-                        embed()
-                            .color(0xa0a0a0)
-                            .title("test2")
-                            .description(obj.msg.author.username)
-                            .fields({field().name("test1").value(obj.msg.author.username)})));
+        std::string message = obj.msg.get_content();
+
+        if (message.at(0) == '%') {
+            if (obj.msg.get_content() == "%embed_test")
+                obj.msg.get_channel().create_message(
+                    aegis::create_message_t()
+                        .content(fmt::format("test3 {}", obj.msg.author.username))
+                        .embed(
+                            embed()
+                                .color(0xa0a0a0)
+                                .title("test2")
+                                .description(obj.msg.author.username)
+                                .fields({field().name("test1").value(obj.msg.author.username)})));
+        }
+        else {
+            messages m;
+            m.username = obj.msg.author.username;
+            m.message = message;
+            messages_vector.push_back(m);
+        }
+
+        discord_message m;
+        m.username = obj.get_user().get_username();
+        m.message = obj.msg.get_content();
+        m.recv_users = {""};
+
+        discord_messages.push_back(m);
     });
     bot.run();
     //bot.yield();
     bot.update_presence("testing fuck");
+    std::ifstream config_file("config.json");
+    std::string open_message = "";
+    if (config_file.is_open())
+    {
+        jsonf jsonfile;
+        config_file >> jsonfile;
+        open_message = jsonfile["open-message"];
+        bot_channel = jsonfile["bot-channel"];
+        config_file.close();
+    }
+
+    pthread_t send_messages_thread;
+    int *apclient = (int *)malloc(sizeof(int));
+    *apclient = 1;
+    //pthread_create(&send_messages_thread, NULL, send_messages, apclient);
 
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(5s);
     bot.update_presence("beep boop");
-    bot.create_message(647466644385300500, "BOT HAS BEEN STARTED\nNOW LET THE PSP'S COME!!!!!!");
+    LOG(open_message);
+    LOG(bot_channel);
 
-
-
-    // for (size_t i = 0; i < 30; i++)
-    // {
-    //     using namespace std::chrono_literals;
-    //     bot.create_message(647466644385300500, fmt::format("test {}", i));
-    //     std::this_thread::sleep_for(2s);
-    // }
-
-    //auto channel = bot.find_channel(aegis::snowflake(647466644385300500));
-    // auto is_connected = bot.get_shard_mgr().get_shard(1).is_connected();
-    // //auto is_online = bot.get_shard_mgr().get_shard(1).is_online();
-    // if (is_connected)
-    //     bot.create_message(647466644385300500, "started");
-    // else
-    //     std::this_thread::sleep_for(2s);
-    // for (size_t i = 0; i < 30; i++)
-    // {
-    //     using namespace std::chrono_literals;
-    //     bot.create_message(647466644385300500, "started");
-    //     std::this_thread::sleep_for(2s);
-    // }
-
-    /*
-
-    while (running)
-    {
-        //Accept and incoming connection
-        INFO("waiting for connections...");
-
-        c = sizeof(struct sockaddr_in);
-
-        //accept connection from an incoming client
-        IF(accept(socket_desc, (struct sockaddr *)&client, (socklen_t *)&c) < 0, "connection accepted", "accept failed", 1);
-
-        using namespace Stardust;
-        Network::PacketIn pIn;
-
-        std::vector<Network::byte> len;
-        Network::byte newByte;
-        recv(client_sock, &newByte, 1, 0);
-
-        while (newByte & 128)
-        {
-            len.push_back(newByte);
-            recv(client_sock, &newByte, 1, 0);
-        }
-        len.push_back(newByte);
-
-        //We now have the length stored in len
-        int length = Network::decodeVarInt(len);
-
-        int totalTaken = 0;
-
-        Network::byte *b = new Network::byte[length];
-        totalTaken += recv(client_sock, b, length, 0);
-
-        for (int i = 0; i < length; i++)
-        {
-            pIn.bytes.push_back(b[i]);
-        }
-
-        pIn.pos = 0;
-
-        pIn.ID = Network::decodeShort(pIn);
-        std::string usr, psw;
-        usr = Network::decodeString(pIn);
-        psw = Network::decodeString(pIn);
-
-        INFO(fmt::format("usr: {}", usr));
-        INFO(fmt::format("psw {}", psw));
-
-        if (pIn.ID == PacketIDS::LOGIN_PACKET)
-        {
-            std::ifstream ref("database.json", std::ios::binary | std::ios::ate);
-            if (ref.good() && ref.tellg())
-            {
-                jsonf ja;
-                ref >> ja;
-                if (ja["users"][usr]["pass"] == psw)
-                    INFO(fmt::format("{}'s password matches", usr));
-                ref.close();
-            }
-        }
-
-        //Utilities::detail::core_Logger->log("Received Packet!", Utilities::LOGGER_LEVEL_DEBUG);
-        //Utilities::detail::core_Logger->log("Packet ID: " + std::to_string(pIn.ID), Utilities::LOGGER_LEVEL_DEBUG);
-
-        std::cout << std::to_string(pIn.ID) << std::endl;
-        std::cout << std::string(pIn.bytes.begin(), pIn.bytes.end()) << std::endl;
-        std::cout << std::endl;
-
-        Network::PacketOut *new_packet = new Network::PacketOut;
-        new_packet->ID = pIn.ID;
-        new_packet->bytes = pIn.bytes;
-
-        std::vector<Network::byte> endByteBuffer;
-
-        int packetLength = new_packet->bytes.size();
-
-        //Header
-        Network::encodeVarInt(packetLength, endByteBuffer);
-        Network::encodeShort(new_packet->ID, endByteBuffer);
-
-        //Add body
-        for (int x = 2; x < new_packet->bytes.size(); x++)
-        {
-            endByteBuffer.push_back(new_packet->bytes[x]);
-        }
-        std::cout << std::endl;
-
-        printf("hashedChars: ");
-        for (int i = 0; i < endByteBuffer.size(); i++)
-        {
-            printf("%x ", endByteBuffer[i]);
-        }
-        std::cout << std::endl;
-
-        //Send over socket
-        if (send(client_sock, endByteBuffer.data(), endByteBuffer.size() + 1, 0) > 0)
-            std::cout << "yes" << std::endl;
-        
-        std::chrono::time_point last_send_time = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double, std::milli> elapsed = std::chrono::high_resolution_clock::now()-last_send_time;
-        if (elapsed.count() > 2000)
-            bot.create_message(647466644385300500, usr);
-
-
-        //int rec;
-        //if (rec = recv(client_socket, recvbuf, 4096, 0) > 0)
-        //	LOG(fmt::format("recieved {} bytes.", rec));
-
-        //LOG(fmt::format("recieved {} bytes.", recvbuf));
-        //if (rec > 0 && recvbuf != "") {
-        //	bot.create_message(647466644385300500, recvbuf);
-        //	bot.create_message(647466644385300500, recvbuf);
-        //	bot.create_message(647466644385300500, recvbuf);
-        //	bot.create_message(647466644385300500, recvbuf);
-        //	bot.create_message(647466644385300500, recvbuf);
-        //	bot.create_message(647466644385300500, recvbuf);
-        //	bot.create_message(647466644385300500, recvbuf);
-        //	bot.create_message(647466644385300500, recvbuf);
-        //	bot.create_message(647466644385300500, recvbuf);
-        //	bot.create_message(647466644385300500, recvbuf);
-        //	bot.create_message(647466644385300500, recvbuf);
-        //	bot.create_message(647466644385300500, recvbuf);
-        //	bot.create_message(647466644385300500, recvbuf);
-        //}
-
-        //int sent_amount;
-        //IF((sent_amount = send(client_socket, recvbuf, rec, 0)) == SOCKET_ERROR, "", "send failed...", 1);
-        //
-        //LOG(fmt::format("sent {} bytes.", sent_amount));
-    }
-
-    close(client_sock);
-    puts("Disconnecting and closing");
-*/
     int socket_desc, client_sock, c, read_size;
     struct sockaddr_in server, client;
     char client_message[2000] = {0};
@@ -380,6 +375,8 @@ int main(int argc, char *argv[])
 
     //Listen
     IF(listen(socket_desc, 100) != 0, "listening to socket", "listen failed...", 1);
+
+    bot.create_message(bot_channel, open_message);
 
     bool running = true;
 
@@ -415,10 +412,13 @@ int main(int argc, char *argv[])
         auto client_sock = accept(socket_desc, (struct sockaddr *)&client, (socklen_t *)&c);
         IF(client_sock < 0, "connection accepted", "accept failed", 1);
 
+        connections.push_back(client_sock);
+
         pthread_t thread;
         int *pclient = (int*)malloc(sizeof(int));
         *pclient = client_sock;
         pthread_create(&thread, NULL, handle_connection, pclient);
+        
         //Receive a message from client
         //int recv_a = 0;
         //if (recv_a = recv(client_sock, client_message, 2000, 0) > 0)
