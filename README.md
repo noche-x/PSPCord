@@ -9,7 +9,11 @@
 PSP-Chat is an **UNOFFICIAL** Discord client for your PSP. Currently this project is in it's early stages, but more will be coming soon.
 
 ## Building & Installation
-Until the project is fully functional, we will not provide a release. 
+
+### Installing from Release
+Go to the releases tab, download the zip file, extract it to PSP/GAME/PSP-Chat/
+
+### Building from Source
 
 #### Prerequisites 
 In order to build the project you need the [**top-sekret/psptoolchain**](https://github.com/top-sekret/psptoolchain).
