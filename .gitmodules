@@ -1,3 +1,8 @@
 [submodule "lib/Stardust-Engine"]
 	path = lib/Stardust-Engine
 	url = https://github.com/NT-Bourgeois-Iridescence-Technologies/Stardust-Engine
+[submodule "src/Test-Server/aegis.cpp"]
+	url = https://github.com/zeroxs/aegis.cpp
+[submodule "lib/aegis.cpp"]
+	path = lib/aegis.cpp
+	url = https://github.com/zeroxs/aegis.cpp
