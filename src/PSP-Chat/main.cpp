@@ -211,7 +211,7 @@ int main()
 
         //Network::g_NetworkDriver.AddPacketHandler(PacketIDS::RECV_MESSAGE_PACKET, handler);
 
-        Network::g_NetworkDriver.ReceivePacket();
+        //Network::g_NetworkDriver.ReceivePacket();
         Network::g_NetworkDriver.HandlePackets();
     }
 

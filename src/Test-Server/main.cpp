@@ -179,8 +179,7 @@ void *handle_connection(void *p_client_socket)
         printf("%x ", endByteBuffer[i]);
     }
     std::cout << std::endl;
-
-    std::this_thread::sleep_for(2s);
+    
     //Send over socket
     //if (send(client_sock, endByteBuffer.data(), endByteBuffer.size() + 1, 0) > 0)
     //  std::cout << "yes" << std::endl;

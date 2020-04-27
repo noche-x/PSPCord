@@ -15,7 +15,7 @@ OBJS = src/PSP-Chat/main.o \
 INCDIR = $(PSPPATH)/include lib/Stardust-Engine/include lib/Stardust-Engine/libs/include #/usr/local/pspdev/psp/sdk/include
 #INCDIR += include include/archive include/menus src/PSP-Chat/
 
-CFLAGS = -O3 -G3 -mpreferred-stack-boundary=4 -ffast-math -fno-rtti -fno-exceptions 
+CFLAGS = -O3 -g3 -mpreferred-stack-boundary=4 -ffast-math -fno-rtti -fno-exceptions 
 CXXFLAGS = -std=gnu++17
 ASFLAGS = $(CFLAGS)
 
