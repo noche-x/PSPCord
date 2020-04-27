@@ -5,8 +5,7 @@
 
 #include <aegis.hpp>
 #include "stardust_networking.h"
-#include "lib/argh/include/argh.h"
-#include "lib/json/include/nlohmann/json.hpp"
+#include <argh.h>
 
 #include <iostream>
 #include <string>
@@ -16,6 +15,7 @@
 #include <sstream>
 #include <limits>
 #include <string>
+#include <thread>
 #include <vector>
 #include <set>
 #include <map>
@@ -56,7 +56,6 @@ struct discord_message {
 
 std::vector<discord_message> discord_messages;
 
-//.token("NjI2MDgyMDczOTgzMzIwMDY0.XoC8vw.Y9-lu67VkrCDQb2qbBiWo_jS0kk")
 aegis::core bot(spdlog::level::trace);
 long long int bot_channel = 0;
 
@@ -95,6 +94,19 @@ void *handle_connection(void *p_client_socket)
     pIn.pos = 0;
     std::string usr, msg;
 
+    printf("[+] a: ");
+    for (int i = 0; i < pIn.bytes.size(); i++)
+    {
+        printf("%x ", pIn.bytes[i]);
+    }
+    std::cout << std::endl;
+    printf("[+] a: ");
+    for (int i = 0; i < pIn.bytes.size(); i++)
+    {
+        printf("%c ", pIn.bytes[i]);
+    }
+    std::cout << std::endl;
+
     pIn.ID = decodeShort(pIn);
     usr = decodeString(pIn);
     msg = decodeString(pIn);
@@ -111,7 +123,7 @@ void *handle_connection(void *p_client_socket)
     LOG(fmt::format("message: {}", msg));
 
     //usr.replace(usr.begin(), usr.end(), ":", "");
-    std::string illegal_chars = ":*_~`>";
+    std::string illegal_chars = ":*_~`>@";
     std::size_t found = usr.find_first_of(illegal_chars);
     if (found != std::string::npos)
         LOG("illegal chars found in username");
@@ -144,16 +156,19 @@ void *handle_connection(void *p_client_socket)
     new_packet->ID = PacketIDS::RECV_MESSAGE_PACKET;//pIn.ID;
     //new_packet->bytes = pIn.bytes;
 
+    encodeString("fuckyou", *new_packet);
+    encodeString("hello sir", *new_packet);
+    
     std::vector<byte> endByteBuffer;
 
-    int packetLength = new_packet->bytes.size();
+    int packetLength = new_packet->bytes.size() + 2;
 
     //Header
     encodeVarInt(packetLength, endByteBuffer);
     encodeShort(new_packet->ID, endByteBuffer);
 
     //Add body
-    for (int x = 2; x < new_packet->bytes.size(); x++)
+    for (int x =0; x < new_packet->bytes.size(); x++)
     {
         endByteBuffer.push_back(new_packet->bytes[x]);
     }
@@ -165,12 +180,11 @@ void *handle_connection(void *p_client_socket)
     }
     std::cout << std::endl;
 
-    //std::this_thread::sleep_for(2s);
-
+    std::this_thread::sleep_for(2s);
     //Send over socket
     //if (send(client_sock, endByteBuffer.data(), endByteBuffer.size() + 1, 0) > 0)
     //  std::cout << "yes" << std::endl;
-    //IF(send(client_sock, endByteBuffer.data(), endByteBuffer.size() + 1, 0) == -1, "sent the package", "send failed", NULL);
+    IF(send(client_sock, endByteBuffer.data(), endByteBuffer.size(), 0) == -1, "sent the packet", "send failed", NULL);
 
     close(client_sock);
     return NULL;
@@ -243,8 +257,20 @@ void *send_messages(void*)
     }
 }
 
+std::string close_message = "";
+
+void exit_program(int sig) {
+    LOG("Caught SIG_TERM");
+
+    bot.create_message(bot_channel, close_message);
+
+    exit(sig);
+}
+
 int main(int argc, char *argv[])
 {
+    signal(SIGINT, exit_program);  
+
     argh::parser cmdl(argv);
     using jsonf = nlohmann::json;
 
@@ -286,17 +312,6 @@ int main(int argc, char *argv[])
         of.close();
 
         return 0;
-    }
-
-    std::ifstream file("database.json");
-    if (!file.good())
-    {
-        jsonf jsonfile;
-        jsonfile["users"]["noche"]["pass"] = "123";
-        std::ofstream of("database.json");
-        of << jsonfile;
-        of.flush();
-        of.close();
     }
 
     bot.set_on_message_create([](aegis::gateway::events::message_create obj) {
@@ -342,6 +357,7 @@ int main(int argc, char *argv[])
         jsonf jsonfile;
         config_file >> jsonfile;
         open_message = jsonfile["open-message"];
+        close_message = jsonfile["close-message"];
         bot_channel = jsonfile["bot-channel"];
         config_file.close();
     }
