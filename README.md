@@ -6,7 +6,7 @@
 - [Proof of Concept](https://www.youtube.com/watch?v=7BbF_-FT33I). I've made a simple POC to show the potential of this project. 
 
 ## Info
-PSP-Chat is an **UNOFFICIAL** Discord client for your PSP. Currently this project is in it's early stages, but more will be coming soon.
+PSPCord is an **UNOFFICIAL** Discord client for your PSP. Currently this project is in it's early stages, but more will be coming soon.
 
 ## Building & Installation
 
@@ -22,7 +22,7 @@ In order to build the project you need the [**top-sekret/psptoolchain**](https:/
 After you clone it you can follow the steps provided on that repo.
 
 1. Run **./build.sh** and it will compile the psp client.
-2. Copy **EBOOT.PBP, PARAM.SFO, psp-chat.elf, psp-chat.prx** to /PSP/GAME/PSP-Chat/
+2. Copy **EBOOT.PBP, PARAM.SFO, psp-chat.elf, pspcord.prx** to /PSP/GAME/PSPCord/
 
 And you should be able to see it in your PSP and launch it.
  
